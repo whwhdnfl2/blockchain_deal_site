@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <style>
+        header{
+            background-color: rgb(0, 118, 139);
+            color: white;
+            text-align: left;
+            padding: 15px;
+            height: 170px;
+        }
+
+        nav{
+            text-align: left;
+            background-color: skyblue;
+        }
+
+        nav a:hover{
+            background-color: white;
+        }
+
+        nav a{
+            display: inline-block;
+            padding: 20px
+        }
+
+        footer{
+            clear: both;
+            background-color: gainsboro;
+            padding: 20px 20px 50px 20px
+        }
+
+        nav a:link, nav a:visited{
+            color: blue;
+        }
+
+        table {
+            border: 2px solid black;
+            width: 100%;
+        }
+
+        th, td {
+             border: 1px solid black;
+        }
+
+        td {
+            text-align: right;
+        }
+
+        img{
+            float: right;
+        }
+        h1{
+            float: left;
+        }
+        .float{
+            float:left;
+        }
+        #good{
+            clear: left;
+        }
+
+        
+
+        .left {
+            float:left;
+            width:33%;
+        }
+        .main {
+            float:left;
+            width:34%;
+        }
+        .right {
+            float:left;
+            width:33%;
+        }
+        @media screen and (max-width:900px)
+        {
+            .left, .main, .right {
+                width:100%; 
+            }
+        }
+
+        /* unvisited link */
+        a:link { color: red; } 
+        /* visited link */
+        a:visited { color: green; } 
+        /* mouse over link */
+        a:hover { color: hotpink; } 
+        /* selected link */
+        a:active { color: blue; } 
+
+        p.name::first-letter{
+            color: skyblue;
+            font-size: x-large;
+        }
+        p.info::first-letter{
+            color: blue;
+            font-size: x-large;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+        
+            xhr.addEventListener("readystatechange", function() {
+            if(this.readyState === 4) {
+                //console.log(this.responseText);
+                var tbl = document.getElementById('tbl0');
+                tbl.innerHTML = "<tr><th>baseDate</th><th>baseTime</th><th>category</th><th>nx</th><th>ny</th><th>obsrValue</th></tr>";
+    
+                var parsed = JSON.parse(this.responseText);
+                for (i in parsed.response.body.items.item) {
+                    var cur = parsed.response.body.items.item[i];    
+                    
+                    switch(cur.category){
+                        case 'PTY':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '강수형태'  + "</td><td>" + cur.nx + "</td><td>" + cur.ny + "</td><td>"+ cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'REH':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '습도(%)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"  + cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'RN1':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '1시간 강수량(mm)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"   + cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'T1H':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '기온(`C)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"   + cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'UUU':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '동서바람성분(m/s)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"   + cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'VEC':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '풍향(deg)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"   + cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'VVV':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '남북바람성분(m/s)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"   + cur.obsrValue + "</td></tr>";
+                        break;
+                        case 'WSD':
+                        tbl.innerHTML += "<tr><td>" + cur.baseDate + "</td><td>" + cur.baseTime + "</td><td>" 
+                        + '풍속(m/s)' + "</td><td>" + cur.nx + "</td><td>" + cur.ny+ "</td><td>"   + cur.obsrValue + "</td></tr>";
+                        break;
+                    }
+                    }
+            }
+            });
+            function displayResponse(){
+                var url = "http://localhost:3000/forecast"
+                var district = document.getElementById('district').value;
+                var flag = false;
+                switch(district){
+                    case "중구":
+                        flag = true;
+                        break;
+                    case "서구":
+                        flag = true;
+                        break;
+                    case "동구":
+                        flag = true;
+                        break;
+                    case "영도구":
+                        flag = true;
+                        break;
+                    case "진구":
+                        flag = true;
+                        break;
+                    case "동래구":
+                        flag = true;
+                        break;
+                    case "남구":
+                        flag = true;
+                        break;
+                    case "북구":
+                        flag = true;
+                        break;
+                    case "해운대구":
+                        flag = true;
+                        break;
+                    case "사하구":
+                        flag = true;
+                        break;
+                    case "금정구":
+                        flag = true;
+                        break;
+                    case "강서구":
+                        flag = true;
+                        break;
+                    case "연제구":
+                        flag = true;
+                        break;
+                    case "수영구":
+                        flag = true;
+                        break;
+                    case "사상구":
+                        flag = true;
+                        break;
+                    case "기장군":
+                        flag = true;
+                        break;
+                    default:
+                        flag = false;
+                }
+                if (flag){
+                    url = url + "?" + "district=" + district;
+                    document.getElementById("test").innerHTML = district;
+                    var domObj1 = document.getElementById("dis_input");
+                    domObj1.innerHTML = "다른 구를 입력하세요.";
+                    domObj1.style.color = "black";
+                    var domObj2 = document.getElementById("dis_list");
+                    domObj2.style.color = "black";
+                    xhr.open("GET", url);
+                    xhr.send();
+                }
+                else{
+                    var domObj1 = document.getElementById("dis_input");
+                    domObj1.innerHTML = "구를 제대로 입력하세요.";
+                    domObj1.style.color = "red";
+                    var domObj2 = document.getElementById("dis_list");
+                    domObj2.style.color = "red";
+                }
+            }
+        </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+    </style>
+    <meta charset="UTF-8">
+    <title>부산지역날씨</title>
+</head>
+<body>
+
+    <header>
+        <h1 style="margin-left: 200px;">전국 주요 도시 날씨 및 부산 지역 날씨, 대기오염 알리미</h1>
+        <img src="weather.png" width="180px" height="180px">
+        <p id="good" style="margin-left: 200px;">부산 지역 날씨 확인</p>
+    </header>
+    <nav>
+        <a href="homepage.html">[홈페이지]</a>
+        <a href="pusan_finedust.html">[전국 대기오염정보]</a>
+    </nav>
+    
+    <footer>
+        <p class="name">201724595 차민준</p>
+    </footer>
+
+
+</body>
+</html>
