@@ -7,7 +7,7 @@ on:
     branches:
       - main
 env:
-  SAMPLE_PATH: Server/
+  SAMPLE_PATH: Server
 jobs:
   build:
     runs-on: ubuntu-latest
