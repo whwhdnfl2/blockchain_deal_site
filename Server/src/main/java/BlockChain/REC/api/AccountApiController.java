@@ -32,27 +32,36 @@ public class AccountApiController {
 
     /**
      * 회원가입 API
-     * @param account 계정정보
      * @return AccountResponse
      */
 
     @PostMapping("/api/signin")
-    public AccountResponse saveAccount(@RequestBody @Valid Account account){
-        System.out.println(account.getPassword());
+    public AccountResponse saveAccount(@RequestBody @Valid RegisterRequest request){
+        System.out.println(request.getPassword());
+        Account account = createAccount(request);
         Long id = accountService.join(account);
         return new AccountResponse(true,CREATED_STATUS_CODE,EMPTY_MESSAGE,id);
     }
 
+    private Account createAccount(RegisterRequest request) {
+        Account account = new Account();
+        account.setUsername(request.getUsername());
+        account.setPassword(request.getPassword());
+        account.setName(request.getName());
+        return account;
+    }
+
     /**
      * 로그인 API
-     * @param account 계정정보
      * @return CommonResponse
      */
     @PostMapping("/api/login")
-    public CommonResponse Login(@RequestBody @Valid Account account){
-        boolean result = accountService.Login(account.getUsername(), account.getPassword());
+    public CommonResponse Login(@RequestBody @Valid LoginRequest request){
+        boolean result = accountService.Login(request.getUsername(), request.getPassword());
         String msg = (result) ? LOGIN_SUCCESS_MESSAGE : LOGIN_FAIL_MESSAGE;
         return new CommonResponse(result,SUCCESS_STATUS_CODE,msg);
     }
+
+
 
 }

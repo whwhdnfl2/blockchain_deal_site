@@ -29,9 +29,7 @@ class AccountServiceTest {
         String username = "김재현";
         String password = "12345";
 
-        Account account = new Account();
-        account.setUsername(username);
-        account.setPassword(password);
+        Account account = createAccount(username, password);
 
         //when
         Long saveID = accountService.join(account);
@@ -46,14 +44,8 @@ class AccountServiceTest {
         String username = "동일인물";
         String password = "12345";
 
-        Account accountA = new Account();
-        accountA.setUsername(username);
-        accountA.setPassword(password);
-
-
-        Account accountB = new Account();
-        accountB.setUsername(username);
-        accountB.setPassword(password);
+        Account accountA = createAccount(username, password);
+        Account accountB = createAccount(username, password);
 
 
         //when
@@ -69,9 +61,7 @@ class AccountServiceTest {
         String username = "김재현";
         String password = "12345";
 
-        Account account = new Account();
-        account.setUsername(username);
-        account.setPassword(password);
+        Account account = createAccount(username, password);
 
         accountService.join(account);
 
@@ -82,15 +72,20 @@ class AccountServiceTest {
         assertEquals(result,true);
     }
 
+    private Account createAccount(String username, String password) {
+        Account account = new Account();
+        account.setUsername(username);
+        account.setPassword(password);
+        return account;
+    }
+
     @Test
     void 로그인_실패() throws Exception{
         String username = "김재현";
         String password = "12345";
         String wrongPassword = "A12345";
 
-        Account account = new Account();
-        account.setUsername(username);
-        account.setPassword(password);
+        Account account = createAccount(username, password);
 
         //when
         accountService.join(account);
