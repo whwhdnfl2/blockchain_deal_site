@@ -2,6 +2,6 @@
 
 ./AAS.sh down
 ./AAS.sh crypto
-./AAS.sh up
+./AAS.sh up -s couchdb
 ./AAS.sh set
 ./AAS.sh install_CC
