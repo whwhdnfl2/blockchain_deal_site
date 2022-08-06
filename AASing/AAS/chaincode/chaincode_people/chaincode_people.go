@@ -12,7 +12,7 @@ peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["CreateAsset","asse
 peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["TransferAsset","asset2","jerry"]}'
 peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["TransferAssetByColor","blue","jerry"]}'
 peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["DeleteAsset","asset1"]}'
-
+dock
 ==== Query assets ====
 peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["ReadAsset","asset1"]}'
 peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["GetAssetsByRange","asset1","asset3"]}'
@@ -80,7 +80,7 @@ import (
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-const index = "color~name"
+const index = "role~name"
 
 // SimpleChaincode implements the fabric-contract-api-go programming model
 type SimpleChaincode struct {
@@ -88,12 +88,12 @@ type SimpleChaincode struct {
 }
 
 type Asset struct {
-	DocType        string `json:"docType"` //docType is used to distinguish the various types of objects in state database
-	ID             string `json:"ID"`      //the field tags are needed to keep case from bouncing around
-	Color          string `json:"color"`
-	Size           int    `json:"size"`
-	Owner          string `json:"owner"`
-	AppraisedValue int    `json:"appraisedValue"`
+	DocType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
+	ID      string `json:"ID"`      //the field tags are needed to keep case from bouncing around
+	Owner   string `json:"owner"`
+	REC     int    `json:"REC"`
+	KRW     int    `json: "KRW"`
+	Role    string `json: "role"`
 }
 
 // HistoryQueryResult structure used for returning result of history query
@@ -112,7 +112,7 @@ type PaginatedQueryResult struct {
 }
 
 // CreateAsset initializes a new asset in the ledger
-func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterface, assetID, color string, size int, owner string, appraisedValue int) error {
+func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterface, assetID, owner string, REC int, KRW int, role string) error {
 	exists, err := t.AssetExists(ctx, assetID)
 	if err != nil {
 		return fmt.Errorf("failed to get asset: %v", err)
@@ -122,12 +122,12 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 	}
 
 	asset := &Asset{
-		DocType:        "asset",
-		ID:             assetID,
-		Color:          color,
-		Size:           size,
-		Owner:          owner,
-		AppraisedValue: appraisedValue,
+		DocType: "asset",
+		ID:      assetID,
+		Owner:   owner,
+		REC:     REC,
+		KRW:     KRW,
+		Role:    role,
 	}
 	assetBytes, err := json.Marshal(asset)
 	if err != nil {
@@ -144,14 +144,17 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 	//  The key is a composite key, with the elements that you want to range query on listed first.
 	//  In our case, the composite key is based on indexName~color~name.
 	//  This will enable very efficient state range queries based on composite keys matching indexName~color~*
-	colorNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Color, asset.ID})
+
+	roleNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Role, asset.ID})
 	if err != nil {
 		return err
 	}
+
 	//  Save index entry to world state. Only the key name is needed, no need to store a duplicate copy of the asset.
 	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
+
 	value := []byte{0x00}
-	return ctx.GetStub().PutState(colorNameIndexKey, value)
+	return ctx.GetStub().PutState(roleNameIndexKey, value)
 }
 
 // ReadAsset retrieves an asset from the ledger
@@ -185,13 +188,13 @@ func (t *SimpleChaincode) DeleteAsset(ctx contractapi.TransactionContextInterfac
 		return fmt.Errorf("failed to delete asset %s: %v", assetID, err)
 	}
 
-	colorNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Color, asset.ID})
+	roleNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Role, asset.ID})
 	if err != nil {
 		return err
 	}
 
 	// Delete index entry
-	return ctx.GetStub().DelState(colorNameIndexKey)
+	return ctx.GetStub().DelState(roleNameIndexKey)
 }
 
 // TransferAsset transfers an asset by setting a new owner name on the asset
@@ -254,6 +257,8 @@ func (t *SimpleChaincode) GetAssetsByRange(ctx contractapi.TransactionContextInt
 // committing peers if the result set has changed between endorsement time and commit time.
 // Therefore, range queries are a safe option for performing update transactions based on query results.
 // Example: GetStateByPartialCompositeKey/RangeQuery
+
+/*color
 func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContextInterface, color, newOwner string) error {
 	// Execute a key range query on all keys starting with 'color'
 	coloredAssetResultsIterator, err := ctx.GetStub().GetStateByPartialCompositeKey(index, []string{color})
@@ -293,6 +298,7 @@ func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContex
 
 	return nil
 }
+*/
 
 // QueryAssetsByOwner queries for assets based on the owners name.
 // This is an example of a parameterized query where the query logic is baked into the chaincode,
@@ -445,16 +451,16 @@ func (t *SimpleChaincode) AssetExists(ctx contractapi.TransactionContextInterfac
 // InitLedger creates the initial set of assets in the ledger.
 func (t *SimpleChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	assets := []Asset{
-		{DocType: "asset", ID: "asset1", Color: "blue", Size: 5, Owner: "Tomoko", AppraisedValue: 300},
-		{DocType: "asset", ID: "asset2", Color: "red", Size: 5, Owner: "Brad", AppraisedValue: 400},
-		{DocType: "asset", ID: "asset3", Color: "green", Size: 10, Owner: "Jin Soo", AppraisedValue: 500},
-		{DocType: "asset", ID: "asset4", Color: "yellow", Size: 10, Owner: "Max", AppraisedValue: 600},
-		{DocType: "asset", ID: "asset5", Color: "black", Size: 15, Owner: "Adriana", AppraisedValue: 700},
-		{DocType: "asset", ID: "asset6", Color: "white", Size: 15, Owner: "Michel", AppraisedValue: 800},
+		{DocType: "asset", ID: "asset1", Owner: "Tomoko", REC: 300, KRW: 5, Role: "buyer"},
+		{DocType: "asset", ID: "asset2", Owner: "Brad", REC: 400, KRW: 5, Role: "buyer"},
+		{DocType: "asset", ID: "asset3", Owner: "Jin Soo", REC: 500, KRW: 5, Role: "buyer"},
+		{DocType: "asset", ID: "asset4", Owner: "Max", REC: 600, KRW: 5, Role: "buyer"},
+		{DocType: "asset", ID: "asset5", Owner: "Adriana", REC: 700, KRW: 5, Role: "seller"},
+		{DocType: "asset", ID: "asset6", Owner: "Michel", REC: 800, KRW: 5, Role: "buyer"},
 	}
 
 	for _, asset := range assets {
-		err := t.CreateAsset(ctx, asset.ID, asset.Color, asset.Size, asset.Owner, asset.AppraisedValue)
+		err := t.CreateAsset(ctx, asset.ID, asset.Owner, asset.REC, asset.KRW, asset.Role)
 		if err != nil {
 			return err
 		}
@@ -472,4 +478,57 @@ func main() {
 	if err := chaincode.Start(); err != nil {
 		log.Panicf("Error starting asset chaincode: %v", err)
 	}
+}
+
+func (t *SimpleChaincode) GetAllAssets(ctx contractapi.TransactionContextInterface) ([]*Asset, error) {
+	// range query with empty string for startKey and endKey does an
+	// open-ended query of all assets in the chaincode namespace.
+	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
+	if err != nil {
+		return nil, err
+	}
+	defer resultsIterator.Close()
+
+	var assets []*Asset
+	for resultsIterator.HasNext() {
+		queryResponse, err := resultsIterator.Next()
+		if err != nil {
+			return nil, err
+		}
+
+		var asset Asset
+		err = json.Unmarshal(queryResponse.Value, &asset)
+		if err != nil {
+			return nil, err
+		}
+		assets = append(assets, &asset)
+	}
+
+	return assets, nil
+}
+
+func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterface, assetID, owner string, REC int, KRW int, role string) error {
+	exists, err := t.AssetExists(ctx, assetID)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return fmt.Errorf("the asset %s does not exist", assetID)
+	}
+
+	// overwriting original asset with new asset
+	asset := Asset{
+		DocType: "asset",
+		ID:      assetID,
+		Owner:   owner,
+		REC:     REC,
+		KRW:     KRW,
+		Role:    role,
+	}
+	assetJSON, err := json.Marshal(asset)
+	if err != nil {
+		return err
+	}
+
+	return ctx.GetStub().PutState(assetID, assetJSON)
 }
