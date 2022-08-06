@@ -7,15 +7,18 @@ source scripts/utils.sh
 export PATH=${PWD}/../bin:$PATH
 export FABRIC_CFG_PATH=$PWD/../config/
 
-#여기 tax나 koreapower로 바꾸면 댐
-setGlobals tax
+# setGlobals buyer
+# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C people -n people -c '{"Args":["CreateAsset","asset1","kimcharless","5","25000","done"]}' 
+# peer chaincode query -C people -n people -c '{"Args":["GetAllAssets"]}' 
 
+# setGlobals buyer
+# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C people -n people -c '{"Args":["CreateAsset","asset2","fuck","5","25000","done"]}' 
+# peer chaincode query -C people -n people -c '{"Args":["GetAllAssets"]}' 
 
+# setGlobals tax
+# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C revenue -n revenue -c '{"Args":["InitLedger"]}' 
+# peer chaincode query -C revenue -n revenue -c '{"Args":["GetAllAssets"]}' 
 
-#peer lifecycle chaincode querycommitted --channelID people  --name people --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
-
-#peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C people -n people --peerAddresses localhost:11061 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/koreapower.example.com/peers/peer0.koreapower.example.com/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}'
-
-
-# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C revenue -n revenue -c '{"Args":["CreateAsset","asset1","blue","5","tom","35"]}'
-peer chaincode query -C revenue -n revenue -c '{"Args":["QueryAssets", "{\"selector\":{\"docType\":\"asset\",\"owner\":\"tom\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
+# setGlobals koreapower
+# peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C market -n market -c '{"Args":["CreateAsset","asset1","너","나","5","25000","done"]}' 
+# peer chaincode query -C market -n market -c '{"Args":["GetAllAssets"]}' 
