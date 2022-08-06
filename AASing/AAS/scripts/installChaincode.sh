@@ -51,9 +51,9 @@ packaging(){
     set -x
     peer lifecycle chaincode package Package/market.tar.gz --path ${CC_MARKET_PATH} --lang golang --label market_${CC_VERSION} >&log.txt
     cat log.txt
-    peer lifecycle chaincode package Package/people.tar.gz --path ${CC_REVENUE_PATH} --lang golang --label people_${CC_VERSION} >&log.txt
+    peer lifecycle chaincode package Package/people.tar.gz --path ${CC_PEOPLE_PATH} --lang golang --label people_${CC_VERSION} >&log.txt
     cat log.txt
-    peer lifecycle chaincode package Package/revenue.tar.gz --path ${CC_PEOPLE_PATH} --lang golang --label revenue_${CC_VERSION} >&log.txt
+    peer lifecycle chaincode package Package/revenue.tar.gz --path ${CC_REVENUE_PATH} --lang golang --label revenue_${CC_VERSION} >&log.txt
     cat log.txt
     set +x
     successln "체인코드 패키징 완료"
