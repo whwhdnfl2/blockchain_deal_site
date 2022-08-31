@@ -18,6 +18,8 @@ import Login from "../Login/Login";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import Card from "../../UI/Card/Card";
+import MyInformation from "../MyInformation/MyInformation";
+
 const drawerWidth = 240;
 
 const HomePage = () => {
@@ -64,9 +66,9 @@ const HomePage = () => {
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
             {page === 1 && `홈페이지`}
-            {page === 2 && `내 정보`}
+            {page === 2 && `내 거래내역`}
             {page === 3 && `REC 구매`}
-            {page === 4 && `Rec 판매`}
+            {page === 4 && `REC 판매`}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -85,7 +87,7 @@ const HomePage = () => {
         <Toolbar />
         <Divider />
         <List>
-          {["홈페이지", "내 정보", "REC 구매", "REC 판매"].map(
+          {["홈페이지", "내 거래내역", "REC 구매", "REC 판매"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
@@ -133,7 +135,7 @@ const HomePage = () => {
       >
         <Toolbar />
         {page === 1 && <Typography paragraph>홈페이지</Typography>}
-        {page === 2 && <Typography paragraph>내정보</Typography>}
+        {page === 2 && <MyInformation/>}
         {page === 3 && <Typography paragraph>구매</Typography>}
         {page === 4 && <Typography paragraph>판매</Typography>}
       </Box>
