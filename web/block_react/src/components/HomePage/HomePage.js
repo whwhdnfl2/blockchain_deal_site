@@ -19,6 +19,9 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import Card from "../../UI/Card/Card";
 import MyInformation from "../MyInformation/MyInformation";
+import Buy from "../Buy/Buy";
+import Sell from "../Sell/Sell";
+
 
 const drawerWidth = 240;
 
@@ -27,8 +30,9 @@ const HomePage = () => {
   const [myID, setMyID] = useState("");
   const [isLogin, setIsLogin] = useState(false);
 
-  let asset = 10;
-  let rec = 100;
+  const [asset, setAsset] = useState(150);
+  const [rec, setRec] = useState(100);
+
 
   const LoginHandler = () => {
     setIsLogin(true);
@@ -136,8 +140,8 @@ const HomePage = () => {
         <Toolbar />
         {page === 1 && <Typography paragraph>홈페이지</Typography>}
         {page === 2 && <MyInformation/>}
-        {page === 3 && <Typography paragraph>구매</Typography>}
-        {page === 4 && <Typography paragraph>판매</Typography>}
+        {page === 3 && <Buy rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}/>}
+        {page === 4 && <Sell rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}>판매</Sell>}
       </Box>
     </Box>
   );
