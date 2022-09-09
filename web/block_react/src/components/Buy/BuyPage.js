@@ -55,10 +55,7 @@ const BuyPage = (props) => {
                 <label htmlFor="rec">구매할 rec 갯수</label>
                 <input type="number" id="rec" onChange={recChangeHandler}></input>
               </div>
-              <p>insetrec{insertRec}</p>
-              <p>보유 asset{props.asset}</p>
-              <p>곱한거{props.buyRec * insertRec}</p>
-              <p>{props.buyNum}</p>
+              <p>총 가격: {props.buyRec * insertRec}</p>
               <Button type="submit" variant="contained">
                 submit
               </Button>

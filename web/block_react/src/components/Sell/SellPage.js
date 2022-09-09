@@ -35,8 +35,16 @@ const SellPage = (props) => {
     event.preventDefault();
     if(props.asset < insertRec*insertPrice){
         setIsValid(true);
+        return;
     }
+    fetchMoviesHandler();
   };
+
+  const fetchMoviesHandler =() =>{
+    fetch("https://swapi.dev/api/people").then(response => {
+      console.log(response.json());
+    })
+  }
 
   return (
     <div>
@@ -47,11 +55,6 @@ const SellPage = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            <p>Sellpage</p>
-            <p>{insertPrice}</p>
-            <p>{insertRec}</p>
-          </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <p>보유 rec: {props.asset}</p>
             <form onSubmit={submitHandler}>
@@ -63,6 +66,7 @@ const SellPage = (props) => {
                 <label htmlFor="price">rec 개당 가격</label>
                 <input type="number" id="price" value={insertPrice} onChange={priceChangeHandler}></input>
               </div>
+              <p>총 가격: {insertPrice * insertRec}</p>
               <Button type="submit" variant="contained">
                 submit
               </Button>

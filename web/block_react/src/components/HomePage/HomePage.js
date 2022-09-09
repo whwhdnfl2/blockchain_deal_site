@@ -21,6 +21,7 @@ import Card from "../../UI/Card/Card";
 import MyInformation from "../MyInformation/MyInformation";
 import Buy from "../Buy/Buy";
 import Sell from "../Sell/Sell";
+import SellTest from "../Sell/SellTest"
 
 
 const drawerWidth = 240;
@@ -141,7 +142,7 @@ const HomePage = () => {
         {page === 1 && <Typography paragraph>홈페이지</Typography>}
         {page === 2 && <MyInformation/>}
         {page === 3 && <Buy rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}/>}
-        {page === 4 && <Sell rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}>판매</Sell>}
+        {page === 4 && <SellTest rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}>판매</SellTest>}
       </Box>
     </Box>
   );

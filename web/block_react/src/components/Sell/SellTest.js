@@ -13,56 +13,38 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import SellPage from "./SellPage";
 
-function createData(rec, num, allRec, name) {
-  return { rec, num, allRec, name };
-}
 
-const rows = [
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-  createData(100, 159, 100, "이순재"),
-  createData(200, 237, 140, "오재석"),
-  createData(300, 262, 300, "김재현"),
-];
 
-const Sell = (props) => {
+const SellTest = (props) => {
   const [page, setPage] = useState(1);
   const handlePage = (event, value) => {
     setPage(value);
   };
 
-  const temp_lows = rows.slice(page * 10 - 10, page * 10);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
+
+  const [rows, setRows] = useState([]);
+
+    fetch("https://swapi.dev/api/films").then(response => {
+        return response.json()
+    }).then(data => {
+        const transformedData = data.results.map(movieData => {
+            return {
+                rec: movieData.episode_id,
+                num: movieData.director,
+                allRec: movieData.title,
+                name: movieData.release_date,
+            }
+        })
+        setRows(transformedData);
+    })
+    const temp_lows = rows.slice(page * 10 - 10, page * 10);
+
 
   return (
     <React.Fragment>
@@ -83,7 +65,7 @@ const Sell = (props) => {
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="rigFht">{row.rec}</TableCell>
+                <TableCell align="right">{row.rec}</TableCell>
                 <TableCell align="right">{row.num}</TableCell>
                 <TableCell align="right">{row.allRec}</TableCell>
                 <TableCell align="right">{row.name}</TableCell>
@@ -111,4 +93,4 @@ const Sell = (props) => {
   );
 };
 
-export default Sell;
+export default SellTest;

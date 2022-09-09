@@ -18,7 +18,7 @@ function createData(rec, num, allRec, name) {
 }
 
 const rows = [
-  createData(100, 159, 100, "이순재"),
+  {rec: 100, num:300, allRec: 140, name:"이순재"},
   createData(200, 237, 140, "오재석"),
   createData(300, 262, 300, "김재현"),
   createData(100, 159, 100, "이순재"),
