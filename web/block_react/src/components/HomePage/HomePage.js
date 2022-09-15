@@ -21,7 +21,6 @@ import Card from "../../UI/Card/Card";
 import MyInformation from "../MyInformation/MyInformation";
 import Buy from "../Buy/Buy";
 import Sell from "../Sell/Sell";
-import SellTest from "../Sell/SellTest"
 
 
 const drawerWidth = 240;
@@ -33,6 +32,8 @@ const HomePage = () => {
 
   const [asset, setAsset] = useState(150);
   const [rec, setRec] = useState(100);
+
+  const [sellRows, setSellRows] = useState([]);
 
 
   const LoginHandler = () => {
@@ -59,6 +60,22 @@ const HomePage = () => {
   };
   const PageHanderFour = () => {
     setPage(4);
+    fetch("https://swapi.dev/api/films")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const transformedData = data.results.map((movieData) => {
+        return {
+          rec: movieData.episode_id,
+          num: movieData.director,
+          allRec: movieData.title,
+          name: movieData.release_date,
+        };
+      });
+      setSellRows(transformedData)
+      console.log(transformedData)
+    });
   };
 
   return (
@@ -142,7 +159,7 @@ const HomePage = () => {
         {page === 1 && <Typography paragraph>홈페이지</Typography>}
         {page === 2 && <MyInformation/>}
         {page === 3 && <Buy rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}/>}
-        {page === 4 && <SellTest rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}>판매</SellTest>}
+        {page === 4 && <Sell sellRow={sellRows} onSellRow={setSellRows} rec={rec} asset={asset} onRec={setRec} onAsset={setAsset}>판매</Sell>}
       </Box>
     </Box>
   );

@@ -45,12 +45,16 @@ const SellPage = (props) => {
       console.log(response.json());
     })
   }
+  const totalClose = () =>{
+    props.handleClose()
+    props.onShow()
+  }
 
   return (
     <div>
       <Modal
         open={props.open}
-        onClose={props.handleClose}
+        onClose={totalClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

@@ -10,8 +10,6 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import BuyPage from "./BuyPage";
 
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
 
 function createData(rec, num, allRec, name) {
   return { rec, num, allRec, name };
@@ -51,14 +49,6 @@ const rows = [
 ];
 
 const Buy = (props) => {
-
-  const [page, setPage] = useState(1);
-  const handlePage = (event, value) => {
-    setPage(value);
-  };
-
-  const temp_lows = rows.slice(page * 10 - 10, page * 10);
-
   const [open, setOpen] = React.useState(false);
   const handleOpen = (t_rec, t_num, t_name) => {
     setNowRec(t_rec);
@@ -86,7 +76,7 @@ const Buy = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {temp_lows.map((row, index) => (
+            {rows.map((row, index) => (
               <TableRow
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -106,13 +96,6 @@ const Buy = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Stack spacing={2}>
-        <Pagination
-          count={parseInt(rows.length / 10) + 1}
-          page={page}
-          onChange={handlePage}
-        />
-      </Stack>
       <BuyPage open={open} handleClose={handleClose} rec={props.rec} asset={props.asset} onRec={props.onRec} onAsset={props.onAsset} buyRec={nowrec} buyNum={nownum} buyName={nowname}></BuyPage>
     </React.Fragment>
   );
