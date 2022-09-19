@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
+import lombok.Data;
 import org.hyperledger.fabric.client.Gateway;
 import org.hyperledger.fabric.client.identity.Identities;
 import org.hyperledger.fabric.client.identity.Identity;
@@ -17,6 +18,7 @@ import org.hyperledger.fabric.client.identity.Signer;
 import org.hyperledger.fabric.client.identity.Signers;
 import org.hyperledger.fabric.client.identity.X509Identity;
 
+@Data
 public class BlockChainConnect {
 
   private final MemberDto memberDto;
@@ -30,15 +32,15 @@ public class BlockChainConnect {
 
     var builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
         // Default timeouts for different gRPC calls
-        .evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
-        .endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
-        .submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
-        .commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+        .evaluateOptions(options -> options.withDeadlineAfter(500, TimeUnit.SECONDS))
+        .endorseOptions(options -> options.withDeadlineAfter(1500, TimeUnit.SECONDS))
+        .submitOptions(options -> options.withDeadlineAfter(500, TimeUnit.SECONDS))
+        .commitStatusOptions(options -> options.withDeadlineAfter(100, TimeUnit.MINUTES));
 
     try (var gateway = builder.connect()) {
       new Grpc(gateway,memberDto).run();
     } finally {
-      channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
+      channel.shutdownNow().awaitTermination(500, TimeUnit.SECONDS);
     }
   }
 
@@ -61,6 +63,7 @@ public class BlockChainConnect {
   public Signer newSigner() throws IOException, InvalidKeyException {
     var keyReader = Files.newBufferedReader(getPrivateKeyPath());
     var privateKey = Identities.readPrivateKey(keyReader);
+    System.out.println(privateKey.getEncoded().toString());
 
     return Signers.newPrivateKeySigner(privateKey);
   }

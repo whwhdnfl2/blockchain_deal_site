@@ -83,7 +83,7 @@ public final class App {
 	private static ManagedChannel newGrpcConnection() throws IOException, CertificateException {
 		var tlsCertReader = Files.newBufferedReader(tlsCertPath);
 		var tlsCert = Identities.readX509Certificate(tlsCertReader);
-
+		System.out.println(peerEndpoint);
 		return NettyChannelBuilder.forTarget(peerEndpoint)
 				.sslContext(GrpcSslContexts.forClient().trustManager(tlsCert).build()).overrideAuthority(overrideAuth)
 				.build();

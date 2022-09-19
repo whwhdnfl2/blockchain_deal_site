@@ -1,6 +1,7 @@
 package BlockChain.REC.dto;
 
 import BlockChain.REC.domain.Account;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import lombok.Data;
@@ -44,10 +45,10 @@ public class MemberDto {
 
     System.out.println("original_id : " + original_id);
     System.out.println("mspID : " + mspID);
-    System.out.println("cryptoPath : " + cryptoPath);
-    System.out.println("certPath : " + certPath);
-    System.out.println("keyDirPath : " + keyDirPath);
-    System.out.println("tlsCertPath : " + tlsCertPath);
+    System.out.println("cryptoPath : " + cryptoPath + "권한 : " + this.cryptoPath.toFile().canRead());
+    System.out.println("certPath : " + certPath + "권한 : " + this.certPath.toFile().canRead());
+    System.out.println("keyDirPath : " + keyDirPath );
+    System.out.println("tlsCertPath : " + tlsCertPath  + "권한 : " + this.tlsCertPath.toFile().canRead());
     System.out.println("channelName : " + channelName);
     System.out.println("chaincodeName : " + chaincodeName);
     System.out.println("peerEndpoint : " + peerEndpoint);
