@@ -4,13 +4,18 @@ import BlockChain.REC.api.Response.AccountResponse;
 import BlockChain.REC.api.Response.CommonResponse;
 import BlockChain.REC.connection.App;
 import BlockChain.REC.connection.BlockChainConnect;
+import BlockChain.REC.connection.Grpc;
 import BlockChain.REC.domain.Account;
+import BlockChain.REC.dto.AssetDto;
 import BlockChain.REC.dto.MemberDto;
 import BlockChain.REC.repository.AccountRepository;
 import BlockChain.REC.service.AccountService;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
@@ -23,8 +28,11 @@ import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.cert.CertificateException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.json.JSONParser;
 import org.hyperledger.fabric.client.CommitException;
 import org.hyperledger.fabric.client.CommitStatusException;
 import org.hyperledger.fabric.client.Contract;
@@ -74,14 +82,26 @@ public class AccountApiController {
     }
 
 
-    @GetMapping("/api")
-    public String start() throws Exception {
+    @GetMapping("/api/assets")
+    public List<AssetDto> getAllAssets() throws Exception {
         String User = "User1";
         Account account = accountRepository.findByUsername(User);
         MemberDto memberDto = new MemberDto(account);
-        new App(memberDto);
-        return "Success";
+        JsonArray Assets = new App(memberDto).main().getAsJsonArray();
+        List<AssetDto> assetDtoList = new ArrayList<>();
+        for(int i=0;i<Assets.size();++i){
+            JsonObject asset = Assets.get(i).getAsJsonObject();
+            assetDtoList.add(new AssetDto(asset));
+        }
+        return assetDtoList;
 
+//        BlockChainConnect blockChainConnect = new BlockChainConnect(memberDto);
+//        Gateway gateway = blockChainConnect.connection();
+//        try {
+//            new Grpc(gateway,memberDto).run();
+//        } finally {
+//            blockChainConnect.closeChannel();
+//        }
 
     }
 

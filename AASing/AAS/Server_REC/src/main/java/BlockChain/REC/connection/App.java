@@ -3,6 +3,7 @@ package BlockChain.REC.connection;
 import BlockChain.REC.dto.MemberDto;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.cert.CertificateException;
 import java.time.Instant;
@@ -32,43 +32,16 @@ import org.hyperledger.fabric.client.identity.X509Identity;
 
 @Data
 public class App {
-
-  private String mspID;// = "buyerMSP";
-  private String channelName;// = "people";
-  private String chaincodeName;//"people";
-
-  // Path to crypto materials.
-  private Path cryptoPath;//Paths.get("..","organizations", "peerOrganizations", "buyer.example.com");
-  // Path to user certificate.
-  private Path certPath;//cryptoPath.resolve(Paths.get("users", "User1@buyer.example.com", "msp", "signcerts", "User1@buyer.example.com-cert.pem"));
-  // Path to user private key directory.
-  private Path keyDirPath;//cryptoPath.resolve(Paths.get("users", "User1@buyer.example.com", "msp", "keystore"));
-  // Path to peer tls certificate.
-  private Path tlsCertPath;//cryptoPath.resolve(Paths.get("peers", "peer0.buyer.example.com", "tls", "ca.crt"));
-
-  // Gateway peer end point.
-  //private static final String peerEndpoint;//"localhost:7051";
-  private String peerEndpoint;//"localhost:9051";
-  private String overrideAuth;//"peer0.buyer.example.com";
-
+  private MemberDto memberDto;
   private Contract contract;
   private final String assetId = "asset" + Instant.now().toEpochMilli();
   private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
   public App(MemberDto memberDto) throws Exception {
-    this.mspID = memberDto.getMspID();
-    this.channelName = memberDto.getChannelName();
-    this.chaincodeName = memberDto.getChaincodeName();
-    this.cryptoPath = memberDto.getCryptoPath();
-    this.certPath = memberDto.getCertPath();
-    this.keyDirPath = memberDto.getKeyDirPath();
-    this.tlsCertPath = memberDto.getTlsCertPath();
-    this.peerEndpoint = memberDto.getPeerEndpoint();
-    this.overrideAuth = memberDto.getOverrideAuth();
-    this.main(memberDto);
+    this.memberDto = memberDto;
   }
 
-  public void main(MemberDto memberDto) throws Exception {
+  public JsonElement main() throws Exception {
     System.out.println("Working Directory = " + System.getProperty("user.dir"));
     // The gRPC client connection should be shared by all Gateway connections to
     // this endpoint.
@@ -80,31 +53,26 @@ public class App {
         .endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
         .submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
         .commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
-    System.out.println(cryptoPath);
-    System.out.println(certPath);
-    System.out.println(keyDirPath);
-    System.out.println(tlsCertPath);
     try (var gateway = builder.connect()) {
-      new App(gateway,memberDto).run();
+      return new App(gateway,memberDto).getAssets();
     } finally {
       channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
 
   private ManagedChannel newGrpcConnection() throws IOException, CertificateException {
-    var tlsCertReader = Files.newBufferedReader(tlsCertPath);
+    var tlsCertReader = Files.newBufferedReader(memberDto.getTlsCertPath());
     var tlsCert = Identities.readX509Certificate(tlsCertReader);
-    System.out.println(peerEndpoint);
-    return NettyChannelBuilder.forTarget(peerEndpoint)
-        .sslContext(GrpcSslContexts.forClient().trustManager(tlsCert).build()).overrideAuthority(overrideAuth)
+    return NettyChannelBuilder.forTarget(memberDto.getPeerEndpoint())
+        .sslContext(GrpcSslContexts.forClient().trustManager(tlsCert).build()).overrideAuthority(memberDto.getOverrideAuth())
         .build();
   }
 
   private Identity newIdentity() throws IOException, CertificateException {
-    var certReader = Files.newBufferedReader(certPath);
+    var certReader = Files.newBufferedReader(memberDto.getCertPath());
     var certificate = Identities.readX509Certificate(certReader);
 
-    return new X509Identity(mspID, certificate);
+    return new X509Identity(memberDto.getMspID(), certificate);
   }
 
   private Signer newSigner() throws IOException, InvalidKeyException {
@@ -115,7 +83,7 @@ public class App {
   }
 
   private Path getPrivateKeyPath() throws IOException {
-    try (var keyFiles = Files.list(keyDirPath)) {
+    try (var keyFiles = Files.list(memberDto.getKeyDirPath())) {
       return keyFiles.findFirst().orElseThrow();
     }
   }
@@ -123,23 +91,14 @@ public class App {
   public App(final Gateway gateway, MemberDto memberDto) {
     // Get a network instance representing the channel where the smart contract is
     // deployed.
-    this.mspID = memberDto.getMspID();
-    this.channelName = memberDto.getChannelName();
-    this.chaincodeName = memberDto.getChaincodeName();
-    this.cryptoPath = memberDto.getCryptoPath();
-    this.certPath = memberDto.getCertPath();
-    this.keyDirPath = memberDto.getKeyDirPath();
-    this.tlsCertPath = memberDto.getTlsCertPath();
-    this.peerEndpoint = memberDto.getPeerEndpoint();
-    this.overrideAuth = memberDto.getOverrideAuth();
-
-    var network = gateway.getNetwork(channelName);
+    this.memberDto = memberDto;
+    var network = gateway.getNetwork(memberDto.getChannelName());
 
     // Get the smart contract from the network.
-    contract = network.getContract(chaincodeName);
+    contract = network.getContract(memberDto.getChaincodeName());
   }
 
-  public void run() throws GatewayException, CommitException {
+  public JsonElement getAssets() throws GatewayException, CommitException {
     // Initialize a set of asset data on the ledger using the chaincode 'InitLedger' function.
     //initLedger();
 
@@ -148,7 +107,7 @@ public class App {
 
     // Create a new asset on the ledger.
     //createAsset();
-    getAllAssets();
+    return getAllAssets();
 
     // Update an existing asset asynchronously.
     // transferAssetAsync();
@@ -161,9 +120,9 @@ public class App {
   }
 
   /**
-   * This type of transaction would typically only be run once by an application
+   * This type of transaction would typically only be getAssets once by an application
    * the first time it was started after its initial deployment. A new version of
-   * the chaincode deployed later would likely not need to run an "init" function.
+   * the chaincode deployed later would likely not need to getAssets an "init" function.
    */
   private void initLedger() throws EndorseException, SubmitException, CommitStatusException, CommitException {
     System.out.println("\n--> Submit Transaction: InitLedger, function creates the initial set of assets on the ledger");
@@ -175,22 +134,24 @@ public class App {
 
   /**
    * Evaluate a transaction to query ledger state.
+   *
+   * @return
    */
-  private void getAllAssets() throws GatewayException {
+  private JsonElement getAllAssets() throws GatewayException {
     System.out.println("\n--> Evaluate Transaction: GetAllAssets, function returns all the current assets on the ledger");
 
     var result = contract.evaluateTransaction("GetAllAssets");
 
-    System.out.println("*** Result: " + prettyJson(result));
+    //System.out.println("*** Result: " + prettyJson(result).toString());
+    return prettyJson(result);
   }
 
-  private String prettyJson(final byte[] json) {
+  private JsonElement prettyJson(final byte[] json) {
     return prettyJson(new String(json, StandardCharsets.UTF_8));
   }
 
-  private String prettyJson(final String json) {
-    var parsedJson = JsonParser.parseString(json);
-    return gson.toJson(parsedJson);
+  private JsonElement prettyJson(final String json) {
+    return JsonParser.parseString(json);
   }
 
   /**

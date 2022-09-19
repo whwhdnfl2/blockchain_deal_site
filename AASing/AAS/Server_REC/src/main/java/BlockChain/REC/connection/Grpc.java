@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import lombok.Data;
 import org.hyperledger.fabric.client.CommitException;
 import org.hyperledger.fabric.client.CommitStatusException;
@@ -22,6 +23,8 @@ public class Grpc {
   private final MemberDto memberDto;
 
   private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+  private final String assetId = "asset" + Instant.now().toEpochMilli();
 
   public Grpc(final Gateway gateway, MemberDto member) {
     this.memberDto = member;

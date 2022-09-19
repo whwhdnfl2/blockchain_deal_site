@@ -23,27 +23,25 @@ public class BlockChainConnect {
 
   private final MemberDto memberDto;
 
+  private ManagedChannel managedChannel;
   public BlockChainConnect(MemberDto member) {
     this.memberDto = member;
   }
 
-  public void connection() throws Exception {
-    var channel = newGrpcConnection();
+  public Gateway connection() throws Exception {
+    managedChannel = newGrpcConnection();
 
-    var builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(channel)
+    var builder = Gateway.newInstance().identity(newIdentity()).signer(newSigner()).connection(managedChannel)
         // Default timeouts for different gRPC calls
-        .evaluateOptions(options -> options.withDeadlineAfter(500, TimeUnit.SECONDS))
-        .endorseOptions(options -> options.withDeadlineAfter(1500, TimeUnit.SECONDS))
-        .submitOptions(options -> options.withDeadlineAfter(500, TimeUnit.SECONDS))
-        .commitStatusOptions(options -> options.withDeadlineAfter(100, TimeUnit.MINUTES));
-
-    try (var gateway = builder.connect()) {
-      new Grpc(gateway,memberDto).run();
-    } finally {
-      channel.shutdownNow().awaitTermination(500, TimeUnit.SECONDS);
-    }
+        .evaluateOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+        .endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
+        .submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
+        .commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
+    return builder.connect();
   }
-
+  public void closeChannel() throws InterruptedException {
+    managedChannel.shutdownNow().awaitTermination(500, TimeUnit.SECONDS);
+  }
   public ManagedChannel newGrpcConnection() throws IOException, CertificateException {
     var tlsCertReader = Files.newBufferedReader(memberDto.getTlsCertPath());
     var tlsCert = Identities.readX509Certificate(tlsCertReader);
