@@ -31,8 +31,8 @@ public class AccountRepository {
      * @return Account
      */
     public Account findByUsername(String username){
-        return em.createQuery("select a from Account a where a.username = :username",Account.class)
-                .setParameter("username",username)
+        return em.createQuery("select a from Account a where a.user_id = :user_id",Account.class)
+                .setParameter("user_id",username)
                 .getSingleResult();
     }
 
@@ -41,9 +41,9 @@ public class AccountRepository {
      * @param username
      * @return boolean
      */
-    public boolean existsByUsername(String username){
-        return (em.createQuery("select a from Account a where a.username = :username",Account.class)
-                 .setParameter("username",username)
+    public boolean existsByUsername(String user_id){
+        return (em.createQuery("select a from Account a where a.user_id = :user_id",Account.class)
+                 .setParameter("user_id",user_id)
                  .getResultList().size() == MAX_NUMBER_OF_USERNAME);
     }
 

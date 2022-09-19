@@ -10,19 +10,22 @@ import static BlockChain.REC.domain.Role.NOT_PERMITTED;
 
 @Entity
 @Getter @Setter
+@Table(name = "User")
 public class Account {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id",nullable = false, unique = true)
-    private String username;
-
-    private String AssetID;
-
+    private String user_id;
     private String password;
 
-    private String name;
+    private String msp_id;
+
+    private String channel_name;
+
+    private String chaincode_name;
+
+    private String peer_end_point;
 
     @Enumerated(EnumType.STRING)
     private Role role;

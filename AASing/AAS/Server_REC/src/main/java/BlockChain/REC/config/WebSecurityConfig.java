@@ -19,7 +19,7 @@ public class WebSecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/signup","/api/signin/exists","/api/signin/","/api/login").permitAll();
+                .antMatchers("/api/signup","/api/signin/exists","/api/signin/","/api/login","/api").permitAll();
         return httpSecurity.build();
     }
 

@@ -34,6 +34,7 @@ import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 public final class App {
+
 	private static final String mspID = "buyerMSP";
 	private static final String channelName = "people";
 	private static final String chaincodeName = "people";
@@ -57,6 +58,7 @@ public final class App {
 	private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	public static void main(final String[] args) throws Exception {
+		System.out.println("Working Directory = " + System.getProperty("user.dir"));
 		// The gRPC client connection should be shared by all Gateway connections to
 		// this endpoint.
 		var channel = newGrpcConnection();
@@ -67,7 +69,10 @@ public final class App {
 				.endorseOptions(options -> options.withDeadlineAfter(15, TimeUnit.SECONDS))
 				.submitOptions(options -> options.withDeadlineAfter(5, TimeUnit.SECONDS))
 				.commitStatusOptions(options -> options.withDeadlineAfter(1, TimeUnit.MINUTES));
-
+		System.out.println(cryptoPath);
+		System.out.println(certPath);
+		System.out.println(keyDirPath);
+		System.out.println(tlsCertPath);
 		try (var gateway = builder.connect()) {
 			new App(gateway).run();
 		} finally {
@@ -121,7 +126,7 @@ public final class App {
 		//getAllAssets();
 
 		// Create a new asset on the ledger.
-		createAsset();
+		//createAsset();
 		getAllAssets();
 
 		// Update an existing asset asynchronously.

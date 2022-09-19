@@ -2,7 +2,10 @@ package BlockChain.REC.api;
 
 import BlockChain.REC.api.Response.AccountResponse;
 import BlockChain.REC.api.Response.CommonResponse;
+import BlockChain.REC.connection.BlockChainConnect;
 import BlockChain.REC.domain.Account;
+import BlockChain.REC.dto.MemberDto;
+import BlockChain.REC.repository.AccountRepository;
 import BlockChain.REC.service.AccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import static BlockChain.REC.config.MagicValue.*;
 public class AccountApiController {
 
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     /**
      * username 중복 검사 API
@@ -31,27 +35,6 @@ public class AccountApiController {
     }
 
     /**
-     * 회원가입 API
-     * @return AccountResponse
-     */
-
-    @PostMapping("/api/signin")
-    public AccountResponse saveAccount(@RequestBody @Valid RegisterRequest request){
-        System.out.println(request.getPassword());
-        Account account = createAccount(request);
-        Long id = accountService.join(account);
-        return new AccountResponse(true,CREATED_STATUS_CODE,EMPTY_MESSAGE,id);
-    }
-
-    private Account createAccount(RegisterRequest request) {
-        Account account = new Account();
-        account.setUsername(request.getUsername());
-        account.setPassword(request.getPassword());
-        account.setName(request.getName());
-        return account;
-    }
-
-    /**
      * 로그인 API
      * @return CommonResponse
      */
@@ -62,6 +45,16 @@ public class AccountApiController {
         return new CommonResponse(result,SUCCESS_STATUS_CODE,msg);
     }
 
+
+    @GetMapping("/api")
+    public String start() throws Exception {
+        String User = "User1";
+        Account account = accountRepository.findByUsername(User);
+        MemberDto memberDto = new MemberDto(account);
+        BlockChainConnect blockChainConnect = new BlockChainConnect(memberDto);
+        blockChainConnect.connection();
+        return "Success";
+    }
 
 
 }
