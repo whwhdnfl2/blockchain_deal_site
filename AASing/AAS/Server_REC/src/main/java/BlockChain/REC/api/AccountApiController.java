@@ -108,22 +108,5 @@ public class AccountApiController {
 //                "RTREC" : 20
 //        }
     }
-    // 여기서부터 Market API
-    @GetMapping("/api/Market")
-    public List<MarketDto> getMarket() throws Exception{
-    Account account = accountRepository.findByUsername("koreapower_admin");
-    MemberDto memberDto = new MemberDto(account);
-    EasilyConnect easilyConnect = new EasilyConnect(memberDto);
-    JsonArray Assets = easilyConnect.getMarket().getAsJsonArray();
-    List<MarketDto> marketDtoList = new ArrayList<>();
-        for(int i=0;i<Assets.size();++i){
-        JsonObject asset = Assets.get(i).getAsJsonObject();
-        MarketDto marketDto = new MarketDto(asset);
-        System.out.println(marketDto.getState());
-        if(marketDto.getState().equals("SALE")){
-            marketDtoList.add(marketDto);
-        }
-    }
-    return marketDtoList;
-    }
+
 }
