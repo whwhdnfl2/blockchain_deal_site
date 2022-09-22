@@ -11,11 +11,6 @@ import Paper from "@mui/material/Paper";
 
 const MyInformationTable = (props) => {
 
-
-
-
-
-
   return (
     <React.Fragment>
         { <TableContainer component={Paper}>
@@ -29,7 +24,7 @@ const MyInformationTable = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {props.informationRow.map((row, index) => (
               <TableRow
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

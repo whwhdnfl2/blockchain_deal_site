@@ -41,8 +41,7 @@ const Tax = (props) => {
   async function postTaxData(){
     const SellData = {
       id: props.myID,
-      rec: insertRec,
-      asset: insertPrice,
+      tax: insertTax,
     }
     const response = await fetch(`/api/`, {
       method: 'POST',
@@ -76,7 +75,7 @@ const Tax = (props) => {
           </Typography>
         </Box>  
       </Modal>
-      {taxIsValid && <ErrorSellPage open={taxIsValid} onValid={setTaxIsValid}></ErrorSellPage>}
+      {taxIsValid && <ErrorTaxPage open={taxIsValid} onValid={setTaxIsValid}></ErrorTaxPage>}
     </div>
   );
 };

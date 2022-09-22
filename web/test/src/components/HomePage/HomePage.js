@@ -23,6 +23,7 @@ import Buy from "../Buy/Buy";
 import Sell from "../Sell/Sell";
 import ErrorLogin from "../Login/ErrorLogin";
 import Tax from "../Tax/Tax";
+import InnerPage from "./InnerPage";
 
 
 const drawerWidth = 240;
@@ -97,17 +98,15 @@ const HomePage = () => {
       return response.json();
     })
     .then((data) => {
-      const transformedData = data.results.map((movieData) => {
+      const transformedData = data.map((marketData) => {
         return {
-          rec: movieData.episode_id,
-          num: movieData.director,
-          allRec: movieData.title,
-          id: movieData.release_date,
+          KRW: marketData.KRW,
+          REC: marketData.REC,
+          allKRW: marketData.KRW * marketData.REC,
+          id: marketData.seller,
         };
       });
-      setSellRows(transformedData);
-      setIsLoading(false);
-      console.log("homepagebuyshow");
+      setInformationRow(transformedData);
     });
     
   };
@@ -316,8 +315,8 @@ const HomePage = () => {
         sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
       >
         <Toolbar />
-        {page === 1 && <Typography paragraph>홈페이지</Typography>}
-        {page === 2 && <MyInformationTable/>}
+        {page === 1 && <InnerPage></InnerPage>}
+        {page === 2 && <MyInformationTable informationRow={informationRow} onInformationRow={setInformationRow}/>}
         {page === 3 && <Buy isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {page === 4 && <Sell isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {page === 5 && <Tax open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
