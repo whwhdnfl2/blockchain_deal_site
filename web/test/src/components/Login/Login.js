@@ -3,17 +3,20 @@ import React, { useState, useReducer } from "react";
 import classes from "./Login.module.css";
 import Button from "@mui/material/Button";
 
+
+
 const emailReducer = (state, action) => {
   if (action.type === "USER_INPUT") {
-    return { value: action.val, isValid: action.val.includes("@") };
+    return { value: action.val, isValid: true };
   }
   if (action.type === "CONF_VALID") {
-    return { value: state.value, isValid: state.value.includes("@") };
+    return { value: state.value, isValid: true };
   }
   return { value: "", isValid: false };
 };
 
 const Login = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
 
   const [enteredPassword, setEnteredPassword] = useState("");
   const [passwordIsValid, setPasswordIsValid] = useState();
@@ -26,12 +29,12 @@ const Login = (props) => {
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
-    setFormIsValid(emailState.isValid && enteredPassword.trim().length > 6);
+    setFormIsValid(emailState.isValid && enteredPassword.trim().length > 1);
   };
 
   const passwordChangeHandler = (event) => {
     setEnteredPassword(event.target.value);
-    setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
+    setFormIsValid(emailState.isValid && event.target.value.trim().length > 1);
   };
 
   const validateEmailHandler = () => {
@@ -44,20 +47,58 @@ const Login = (props) => {
     setPasswordIsValid(enteredPassword.trim().length > 6);
   };
 
+  const BuyerOrSellerAPI = () => {
+    setIsLoading(true);
+    fetch(`/api/logininfo/${emailState.value}`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      setIsLoading(false);
+      props.onRec(data.rec);
+      props.onAsset(data.krw);
+    });
+  }
+
+  const AdminAPI = () => {
+    setIsLoading(true);
+    fetch("http://local:8080/api/")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      setIsLoading(false);
+      props.onTax(data.tax);
+    });
+  }
+
   const submitHandler = (event) => {
     event.preventDefault();
-    if(!(emailState.value === "whwhdnfl2@naver.com" || emailState.value === "kimcharless@naver.com")){
+    if(!(emailState.value === "Seller_User1" || emailState.value === "Seller_User2" || emailState.value === "Buyer_User1" || emailState.value === "Buyer_User2" || emailState.value === "admin" || emailState.value === "admin_tax")){
       props.onValid(true);
       return;
     }
-    if(emailState.value === "whwhdnfl2@naver.com"){
-      props.onTax(100);
+    if(emailState.value === "Seller_User1" || emailState.value === "Seller_User2"){
+      BuyerOrSellerAPI();
       props.onID(emailState.value);
       props.onSellerLogin();
       props.onRole("seller");
     }
+    else if(emailState.value === "admin"){
+      AdminAPI();
+      props.onID(emailState.value);
+      props.onAdminLogin();
+      props.onRole("admin");
+    }
+    else if (emailState.value === "admin_tax"){
+      AdminAPI();
+      props.onID(emailState.value);
+      props.onTaxAdminLogin();
+      props.onRole("taxAdmin");
+    }
     else{
-      props.onTax(100);
+      console.log(isLoading);
+      BuyerOrSellerAPI();
       props.onID(emailState.value);
       props.onBuyerLogin();
       props.onRole("buyer");
@@ -66,6 +107,8 @@ const Login = (props) => {
 
   return (
     <React.Fragment>
+      {isLoading && <p> now login...</p>}
+      {!isLoading &&
       <form onSubmit={submitHandler}>
         <div
           className={`${classes.control} ${
@@ -74,7 +117,7 @@ const Login = (props) => {
         >
           <label htmlFor="email">아이디</label>
           <input
-            type="email"
+            type="text"
             id="email"
             value={emailState.value}
             onChange={emailChangeHandler}
@@ -100,7 +143,7 @@ const Login = (props) => {
             Login
           </Button>
         </div>
-      </form>
+      </form>}
     </React.Fragment>
   );
 };

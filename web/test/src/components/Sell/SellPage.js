@@ -38,12 +38,8 @@ const SellPage = (props) => {
         return;
     }
     else{
-      //post 명령 보내면 됨.
-      //판매자 rec를 까고 판매시장에 올리면 됨. 
-      //json 형식: id, rec, asset
       postSellData();
       props.handleClose();
-      //props.onShow()
     }
   };
 
@@ -53,7 +49,7 @@ const SellPage = (props) => {
       rec: insertRec,
       asset: insertPrice,
     }
-    const response = await fetch('https://react-http-aa86b-default-rtdb.firebaseio.com/good.json', {
+    const response = await fetch('http://local:8080/api/', {
       method: 'POST',
       body: JSON.stringify(SellData)
     });

@@ -22,6 +22,7 @@ import MyInformationTable from "../MyInformation/MyInformationTable";
 import Buy from "../Buy/Buy";
 import Sell from "../Sell/Sell";
 import ErrorLogin from "../Login/ErrorLogin";
+import Tax from "../Tax/Tax";
 
 
 const drawerWidth = 240;
@@ -32,10 +33,19 @@ const HomePage = () => {
   const [myID, setMyID] = useState("");
   const [isLoginBuyer, setIsLoginBuyer] = useState(false);
   const [isLoginSeller, setIsLoginSeller] = useState(false);
+  const [isLoginAdmin, setIsLoginAdmin] = useState(false);
+  const [isLoginAdminTax, setIsLoginAdminTax] = useState(false);
   const [tax, setTax] = useState(0);
 
-  const [asset, setAsset] = useState(150);
-  const [rec, setRec] = useState(100);
+  const [taxOpen, setTaxOpen] = useState(false);
+
+  const handleTaxOpen = () => {
+    setTaxOpen(true);
+  };
+  const handleTaxClose = () => setTaxOpen(false);
+
+  const [asset, setAsset] = useState(0);
+  const [rec, setRec] = useState(0);
 
   const [sellRows, setSellRows] = useState([]);
 
@@ -54,9 +64,19 @@ const HomePage = () => {
     setIsLoginSeller(true);
   };
 
+  const AdminLoginHandler = () => {
+    setIsLoginAdmin(true);
+  }
+
+  const TaxAdminLoginHandler = () => {
+    setIsLoginAdminTax(true);
+  }
+
   const LogoutHandler = () => {
     setIsLoginBuyer(false);
     setIsLoginSeller(false);
+    setIsLoginAdmin(false);
+    setIsLoginAdminTax(false);
     setPage(1);
   };
 
@@ -113,6 +133,11 @@ const HomePage = () => {
     });
   };
 
+  const PageHandlerFive =() =>{
+    setPage(5);
+    handleTaxOpen();
+  }
+
   return (
     <React.Fragment>
     <Box sx={{ display: "flex" }}>
@@ -145,7 +170,7 @@ const HomePage = () => {
         <Toolbar />
         <Divider />
         <List>
-          {["홈페이지", "내 거래내역", "REC 구매", "REC 판매"].map(
+          {(isLoginBuyer || isLoginSeller) && (["홈페이지", "내 거래내역", "REC 구매", "REC 판매"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
@@ -174,10 +199,70 @@ const HomePage = () => {
                 )}
               </ListItem>
             )
-          )}
+          ))}
+          {isLoginAdmin && (["홈페이지", "모든 거래내역", "REC 구매", "REC 판매"].map(
+            (text, index) => (
+              <ListItem key={text} disablePadding>
+                {index === 0 && (
+                  <ListItemButton disabled={false} onClick={PageHanderOne}>
+                    <ListItemIcon>{<Home />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 1 && (
+                  <ListItemButton disabled={false} onClick={PageHanderTwo}>
+                    <ListItemIcon>{<PermIdentity />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 2 && (
+                  <ListItemButton disabled={true} onClick={PageHanderThree}>
+                    <ListItemIcon>{<Store />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 3 && (
+                  <ListItemButton disabled={true} onClick={PageHanderFour}>
+                    <ListItemIcon>{<Store />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+              </ListItem>
+            )
+          ))}
+          {isLoginAdminTax && (["홈페이지", "Tax 수정", "REC 구매", "REC 판매"].map(
+            (text, index) => (
+              <ListItem key={text} disablePadding>
+                {index === 0 && (
+                  <ListItemButton disabled={false} onClick={PageHanderOne}>
+                    <ListItemIcon>{<Home />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 1 && (
+                  <ListItemButton disabled={false} onClick={PageHandlerFive}>
+                    <ListItemIcon>{<PermIdentity />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 2 && (
+                  <ListItemButton disabled={true} onClick={PageHanderThree}>
+                    <ListItemIcon>{<Store />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 3 && (
+                  <ListItemButton disabled={true} onClick={PageHanderFour}>
+                    <ListItemIcon>{<Store />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+              </ListItem>
+            )
+          ))}          
         </List>
         <Divider />
-        {!(isLoginBuyer || isLoginSeller) && <Login onRole={setRole} onSellerLogin={SellerLoginHandler} onBuyerLogin={BuyerLoginHandler} onID={MyIDHander} onTax={setTax} isValid={loginIsValid} onValid={setLoginIsValid}/>}
+        {!(isLoginBuyer || isLoginSeller || isLoginAdmin || isLoginAdminTax) && <Login rec={rec} onRec={setRec} onAsset={setAsset} asset={asset} onRole={setRole} onSellerLogin={SellerLoginHandler} onBuyerLogin={BuyerLoginHandler} onAdminLogin={AdminLoginHandler} onTaxAdminLogin={TaxAdminLoginHandler} onID={MyIDHander} onTax={setTax} isValid={loginIsValid} onValid={setLoginIsValid}/>}
         {(isLoginBuyer || isLoginSeller) && (
           <Card>
             <p>{myID}</p>
@@ -188,6 +273,22 @@ const HomePage = () => {
             <Button onClick={LogoutHandler}>Logout</Button>
           </Card>
         )}
+        {isLoginAdmin && (
+          <Card>
+            <p>{myID}</p>
+            <p>role: {role}</p>
+            <p>현재 세율: {tax}</p>
+            <Button onClick={LogoutHandler}>Logout</Button>
+          </Card>
+        )}
+        {isLoginAdminTax && (
+          <Card>
+            <p>{myID}</p>
+            <p>role: {role}</p>
+            <p>현재 세율: {tax}</p>
+            <Button onClick={LogoutHandler}>Logout</Button>
+          </Card>
+        )}        
       </Drawer>
       <Box
         component="main"
@@ -198,6 +299,7 @@ const HomePage = () => {
         {page === 2 && <MyInformationTable/>}
         {page === 3 && <Buy isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {page === 4 && <Sell isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
+        {page === 5 && <Tax open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
       </Box>
     </Box>
     <ErrorLogin open={loginIsValid} onValid={setLoginIsValid}></ErrorLogin>

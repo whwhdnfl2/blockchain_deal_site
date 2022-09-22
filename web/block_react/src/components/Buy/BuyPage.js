@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import ErrorBuyPage from "./ErrorBuyPage";
+import Card from "../../UI/Card/Card"
 
 const style = {
   position: "absolute",
@@ -22,18 +23,45 @@ const BuyPage = (props) => {
   const [isValid, setIsValid] = useState(false);
   const [insertRec, setInsertRec] = useState(0);
 
-
   const recChangeHandler = (event) =>{
     setInsertRec(event.target.value);
   }
 
   const submitHandler = (event) =>{
     event.preventDefault();
-    if(props.asset < props.buyRec*insertRec){
+    if(props.myAsset < props.buyRec*insertRec){
         setIsValid(true);
+        return;
+    }
+    else{
+      //post 보내면 됨
+      //seller asset은 더하면 됨.
+      //buyer rec는 더하고 asset은 빼면 됨.
+      //json 형식: buyerid, sellerid, rec, asset
+      putBuyData();
+      props.handleClose();
+      //props.onShow()
     }
   }
 
+  async function putBuyData() {
+    const SellData = {
+      buyerID: props.myID, //구매자 id
+      sellerID: props.buyID,// 판매자 id
+      rec: insertRec, //입력한 rec 갯수
+      asset: props.buyRec, //rec 개당 가격
+    }
+    const response = await fetch('https://react-http-aa86b-default-rtdb.firebaseio.com/good.json', {
+      method: 'POST',
+      body: JSON.stringify(SellData)
+    });
+    props.onMyRec(Number(props.myRec) + Number(insertRec));
+    props.onMyAsset(props.myAsset - props.buyRec*insertRec);
+    const data = await response.json();
+    console.log(JSON.stringify(data));
+    console.log("postsell");
+    props.onshow();
+  }
 
   return (
     <div>
@@ -45,14 +73,16 @@ const BuyPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            <p>rec 개당 가격: {props.buyRec}</p>
-            <p>rec 갯수: {props.buyNum}</p>
-            <p>판매자: {props.buyName}</p>
+            <Card>
+              <p>rec 개당 가격: {props.buyRec}</p>
+              <p>rec 갯수: {props.buyNum}</p>
+              <p>판매자: {props.buyID}</p>
+            </Card>
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <form onSubmit={submitHandler}>
               <div>
-                <label htmlFor="rec">구매할 rec 갯수</label>
+                <label htmlFor="rec">구매할 rec 갯수: </label>
                 <input type="number" id="rec" onChange={recChangeHandler}></input>
               </div>
               <p>총 가격: {props.buyRec * insertRec}</p>

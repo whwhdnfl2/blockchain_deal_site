@@ -4,7 +4,8 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Button } from "@mui/material";
 import { useState } from "react";
-import ErrorSellPage from "./ErrorSellPage";
+import ErrorBuyPage from "./ErrorBuyPage";
+import Card from "../../UI/Card/Card"
 
 const style = {
   position: "absolute",
@@ -18,46 +19,40 @@ const style = {
   p: 4,
 };
 
-const SellPage = (props) => {
+const BuyPage = (props) => {
   const [isValid, setIsValid] = useState(false);
   const [insertRec, setInsertRec] = useState(0);
-  const [insertPrice, setInsertPrice] = useState(0);
-
 
   const recChangeHandler = (event) =>{
     setInsertRec(event.target.value);
   }
 
-  const priceChangeHandler = (event) =>{
-    setInsertPrice(event.target.value);
-  }
-  const submitHandler = (event) => {
+  const submitHandler = (event) =>{
     event.preventDefault();
-    if(props.asset < insertRec*insertPrice){
+    if(props.myAsset < props.buyRec*insertRec){
         setIsValid(true);
         return;
     }
     else{
-      //post 명령 보내면 됨.
-      //판매자 rec를 까고 판매시장에 올리면 됨. 
-      //json 형식: id, rec, asset
-      postSellData();
+      putBuyData();
       props.handleClose();
-      //props.onShow()
     }
-  };
+  }
 
-  async function postSellData(){
+  async function putBuyData() {
     const SellData = {
-      id: props.myID,
-      rec: insertRec,
-      asset: insertPrice,
+      buyerID: props.myID, //구매자 id
+      sellerID: props.buyID,// 판매자 id
+      rec: insertRec, //입력한 rec 갯수
+      asset: props.buyRec, //rec 개당 가격
     }
-    const response = await fetch('https://react-http-aa86b-default-rtdb.firebaseio.com/good.json', {
+    const response = await fetch('http://local:8080/api/', {
       method: 'POST',
       body: JSON.stringify(SellData)
     });
-    props.onMyRec(props.myRec - insertRec)
+
+    props.onMyRec(Number(props.myRec) + Number(insertRec));
+    props.onMyAsset(props.myAsset - props.buyRec*insertRec);
     const data = await response.json();
     console.log(JSON.stringify(data));
     console.log("postsell");
@@ -73,18 +68,20 @@ const SellPage = (props) => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <Card>
+              <p>rec 개당 가격: {props.buyRec}</p>
+              <p>rec 갯수: {props.buyNum}</p>
+              <p>판매자: {props.buyID}</p>
+            </Card>
+          </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <p>보유 rec: {props.myRec}</p>
             <form onSubmit={submitHandler}>
               <div>
-                <label htmlFor="rec">판매할 rec 갯수</label>
-                <input type="number" id="rec" value={insertRec} onChange={recChangeHandler}></input>
+                <label htmlFor="rec">구매할 rec 갯수: </label>
+                <input type="number" id="rec" onChange={recChangeHandler}></input>
               </div>
-              <div>
-                <label htmlFor="price">rec 개당 가격</label>
-                <input type="number" id="price" value={insertPrice} onChange={priceChangeHandler}></input>
-              </div>
-              <p>총 가격: {insertPrice * insertRec}</p>
+              <p>총 가격: {props.buyRec * insertRec}</p>
               <Button type="submit" variant="contained">
                 submit
               </Button>
@@ -92,9 +89,9 @@ const SellPage = (props) => {
           </Typography>
         </Box>  
       </Modal>
-      <ErrorSellPage open={isValid} onValid={setIsValid}></ErrorSellPage>
+      <ErrorBuyPage open={isValid} onValid={setIsValid}></ErrorBuyPage>
     </div>
   );
 };
 
-export default SellPage;
+export default BuyPage;

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,50 +8,60 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 import Button from "@mui/material/Button";
-import SellPage from "./SellPage";
+import BuyPage from "./BuyPage";
 
-const Sell = (props) => {
+
+
+const Buy = (props) => {
   const [open, setOpen] = useState(false);
 
-  const handleOpen = () => {
+  const handleOpen = (t_rec, t_num, t_name) => {
+    setNowRec(t_rec);
+    setNowAsset(t_num);
+    setNowID(t_name);
     setOpen(true);
   };
+
   const handleClose = () => setOpen(false);
+
+  const [nowrec, setNowRec] = useState(1);
+  const [nownum, setNowAsset] = useState(1);
+  const [nowID, setNowID] = useState("");
+
 
   const showData = () => {
     props.onIsLoading(true);
-    fetch("https://swapi.dev/api/films")
+    fetch("http://local:8080/api/")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        const transformedData = data.results.map((movieData) => {
+        const transformedData = data.map((marketData) => {
           return {
-            rec: movieData.episode_id,
-            num: movieData.director,
-            allRec: movieData.title,
-            id: movieData.release_date,
+            KRW: marketData.KRW,
+            REC: marketData.REC,
+            allKRW: marketData.KRW * marketData.REC,
+            id: marketData.seller,
           };
         });
-        props.onSellRow(transformedData)
+        props.onSellRow(transformedData);
         props.onIsLoading(false);
-        console.log("onshowSell")
+        console.log("buyonshow");
       });
   };
 
+
   return (
     <React.Fragment>
-      <Button onClick={handleOpen} variant="contained">
-        매물 등록
-      </Button>
       {!props.isLoading && <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="right">rec 개당 가격&nbsp;($)</TableCell>
-              <TableCell align="right">rec 갯수($)</TableCell>
+              <TableCell align="right">rec 갯수</TableCell>
               <TableCell align="right">총 가격&nbsp;($)</TableCell>
               <TableCell align="right">판매자</TableCell>
+              <TableCell align="right">구매</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -60,28 +70,25 @@ const Sell = (props) => {
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="right">{row.rec}</TableCell>
-                <TableCell align="right">{row.num}</TableCell>
-                <TableCell align="right">{row.allRec}</TableCell>
+                <TableCell align="right">{row.KRW}</TableCell>
+                <TableCell align="right">{row.REC}</TableCell>
+                <TableCell align="right">{row.allKRW}</TableCell>
                 <TableCell align="right">{row.id}</TableCell>
+                <TableCell align="right">
+                  {props.asset >= row.allKRW && (
+                    <Button onClick={() => handleOpen(row.KRW, row.REC, row.id)}>구매</Button>
+                  )}
+                  {props.asset < row.allKRW && <Button disabled>구매</Button>}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>}
       {props.isLoading && <h2>Loading...</h2>}
-      <SellPage
-        open={open}
-        handleClose={handleClose}
-        myID={props.myID}
-        myRec={props.myRec}
-        myAsset={props.myAsset}
-        onMyRec={props.onMyRec}
-        onMyAsset={props.onMyAsset}
-        onShow={showData}
-      ></SellPage>
+      <BuyPage open={open} onShow={showData} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum} buyID={nowID}></BuyPage>
     </React.Fragment>
   );
 };
 
-export default Sell;
+export default Buy;

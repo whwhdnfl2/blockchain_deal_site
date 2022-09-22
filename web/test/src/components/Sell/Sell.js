@@ -20,17 +20,17 @@ const Sell = (props) => {
 
   const showData = () => {
     props.onIsLoading(true);
-    fetch("https://swapi.dev/api/films")
+    fetch("http://local:8080/api/")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        const transformedData = data.results.map((movieData) => {
+        const transformedData = data.map((marketData) => {
           return {
-            rec: movieData.episode_id,
-            num: movieData.director,
-            allRec: movieData.title,
-            id: movieData.release_date,
+            KRW: marketData.KRW,
+            REC: marketData.REC,
+            allKRW: marketData.KRW * marketData.REC,
+            id: marketData.seller,
           };
         });
         props.onSellRow(transformedData)
@@ -60,9 +60,9 @@ const Sell = (props) => {
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="right">{row.rec}</TableCell>
-                <TableCell align="right">{row.num}</TableCell>
-                <TableCell align="right">{row.allRec}</TableCell>
+                <TableCell align="right">{row.KRW}</TableCell>
+                <TableCell align="right">{row.REC}</TableCell>
+                <TableCell align="right">{row.allKRW}</TableCell>
                 <TableCell align="right">{row.id}</TableCell>
               </TableRow>
             ))}
