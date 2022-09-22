@@ -1,72 +1,3 @@
-/*
- SPDX-License-Identifier: Apache-2.0
-*/
-
-/*
-====CHAINCODE EXECUTION SAMPLES (CLI) ==================
-
-==== Invoke assets ====
-peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["CreateAsset","asset1","blue","5","tom","35"]}'
-peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["CreateAsset","asset2","red","4","tom","50"]}'
-peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["CreateAsset","asset3","blue","6","tom","70"]}'
-peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["TransferAsset","asset2","jerry"]}'
-peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["TransferAssetByColor","blue","jerry"]}'
-peer chaincode invoke -C myc1 -n asset_transfer -c '{"Args":["DeleteAsset","asset1"]}'
-dock
-==== Query assets ====
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["ReadAsset","asset1"]}'
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["GetAssetsByRange","asset1","asset3"]}'
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["GetAssetHistory","asset1"]}'
-
-Rich Query (Only supported if CouchDB is used as state database):
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["QueryAssetsByOwner","tom"]}'
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["QueryAssets","{\"selector\":{\"owner\":\"tom\"}}"]}'
-
-Rich Query with Pagination (Only supported if CouchDB is used as state database):
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["QueryAssetsWithPagination","{\"selector\":{\"owner\":\"tom\"}}","3",""]}'
-
-INDEXES TO SUPPORT COUCHDB RICH QUERIES
-
-Indexes in CouchDB are required in order to make JSON queries efficient and are required for
-any JSON query with a sort. Indexes may be packaged alongside
-chaincode in a META-INF/statedb/couchdb/indexes directory. Each index must be defined in its own
-text file with extension *.json with the index definition formatted in JSON following the
-CouchDB index JSON syntax as documented at:
-http://docs.couchdb.org/en/2.3.1/api/database/find.html#db-index
-
-This asset transfer ledger example chaincode demonstrates a packaged
-index which you can find in META-INF/statedb/couchdb/indexes/indexOwner.json.
-
-If you have access to the your peer's CouchDB state database in a development environment,
-you may want to iteratively test various indexes in support of your chaincode queries.  You
-can use the CouchDB Fauxton interface or a command line curl utility to create and update
-indexes. Then once you finalize an index, include the index definition alongside your
-chaincode in the META-INF/statedb/couchdb/indexes directory, for packaging and deployment
-to managed environments.
-
-In the examples below you can find index definitions that support asset transfer ledger
-chaincode queries, along with the syntax that you can use in development environments
-to create the indexes in the CouchDB Fauxton interface or a curl command line utility.
-
-
-Index for docType, owner.
-
-Example curl command line to define index in the CouchDB channel_chaincode database
-curl -i -X POST -H "Content-Type: application/json" -d "{\"index\":{\"fields\":[\"docType\",\"owner\"]},\"name\":\"indexOwner\",\"ddoc\":\"indexOwnerDoc\",\"type\":\"json\"}" http://hostname:port/myc1_assets/_index
-
-
-Index for docType, owner, size (descending order).
-
-Example curl command line to define index in the CouchDB channel_chaincode database:
-curl -i -X POST -H "Content-Type: application/json" -d "{\"index\":{\"fields\":[{\"size\":\"desc\"},{\"docType\":\"desc\"},{\"owner\":\"desc\"}]},\"ddoc\":\"indexSizeSortDoc\", \"name\":\"indexSizeSortDesc\",\"type\":\"json\"}" http://hostname:port/myc1_assets/_index
-
-Rich Query with index design doc and index name specified (Only supported if CouchDB is used as state database):
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["QueryAssets","{\"selector\":{\"docType\":\"asset\",\"owner\":\"tom\"}, \"use_index\":[\"_design/indexOwnerDoc\", \"indexOwner\"]}"]}'
-
-Rich Query with index design doc specified only (Only supported if CouchDB is used as state database):
-peer chaincode query -C myc1 -n asset_transfer -c '{"Args":["QueryAssets","{\"selector\":{\"docType\":{\"$eq\":\"asset\"},\"owner\":{\"$eq\":\"tom\"},\"size\":{\"$gt\":0}},\"fields\":[\"docType\",\"owner\",\"size\"],\"sort\":[{\"size\":\"desc\"}],\"use_index\":\"_design/indexSizeSortDoc\"}"]}'
-*/
-
 package main
 
 import (
@@ -80,23 +11,23 @@ import (
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
-const index = "role~name"
+const index = "state~name"
 
-// SimpleChaincode implements the fabric-contract-api-go programming model
 type SimpleChaincode struct {
 	contractapi.Contract
 }
 
 type Asset struct {
-	DocType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
-	ID      string `json:"ID"`      //the field tags are needed to keep case from bouncing around
-	Owner   string `json:"owner"`
-	REC     int    `json:"REC"`
-	KRW     int    `json: "KRW"`
-	Role    string `json: "role"`
+	DocType  string `json:"docType"`
+	ID       string `json:"ID"`
+	REC      int    `json:"REC"`
+	KRW      int    `json: "KRW"`
+	RTREC    int    `json: "RTREC"`
+	RTKRW    int    `json: "RTKRW"`
+	RTpeople string `json: "RTpeople"`
+	Role     string `json: "role"`
 }
 
-// HistoryQueryResult structure used for returning result of history query
 type HistoryQueryResult struct {
 	Record    *Asset    `json:"record"`
 	TxId      string    `json:"txId"`
@@ -104,15 +35,13 @@ type HistoryQueryResult struct {
 	IsDelete  bool      `json:"isDelete"`
 }
 
-// PaginatedQueryResult structure used for returning paginated query results and metadata
 type PaginatedQueryResult struct {
 	Records             []*Asset `json:"records"`
 	FetchedRecordsCount int32    `json:"fetchedRecordsCount"`
 	Bookmark            string   `json:"bookmark"`
 }
 
-// CreateAsset initializes a new asset in the ledger
-func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterface, assetID, owner string, REC int, KRW int, role string) error {
+func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterface, assetID string, REC int, KRW int, RTREC int, RTKRW int, RTpeople string, role string) error {
 	exists, err := t.AssetExists(ctx, assetID)
 	if err != nil {
 		return fmt.Errorf("failed to get asset: %v", err)
@@ -122,12 +51,14 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 	}
 
 	asset := &Asset{
-		DocType: "asset",
-		ID:      assetID,
-		Owner:   owner,
-		REC:     REC,
-		KRW:     KRW,
-		Role:    role,
+		DocType:  "asset",  //아이디  - whwh
+		ID:       assetID,  //키
+		REC:      REC,      //보유 REC 개수
+		KRW:      KRW,      //보유 원
+		RTREC:    RTREC,    //거래 시 REC개수 저장
+		RTKRW:    RTKRW,    //거래 원 저장
+		RTpeople: RTpeople, //거래 상대 저장
+		Role:     role,     //buyer , seller 저장
 	}
 	assetBytes, err := json.Marshal(asset)
 	if err != nil {
@@ -139,22 +70,13 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 		return err
 	}
 
-	//  Create an index to enable color-based range queries, e.g. return all blue assets.
-	//  An 'index' is a normal key-value entry in the ledger.
-	//  The key is a composite key, with the elements that you want to range query on listed first.
-	//  In our case, the composite key is based on indexName~color~name.
-	//  This will enable very efficient state range queries based on composite keys matching indexName~color~*
-
-	roleNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Role, asset.ID})
+	stateNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Role, asset.ID})
 	if err != nil {
 		return err
 	}
 
-	//  Save index entry to world state. Only the key name is needed, no need to store a duplicate copy of the asset.
-	//  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
-
 	value := []byte{0x00}
-	return ctx.GetStub().PutState(roleNameIndexKey, value)
+	return ctx.GetStub().PutState(stateNameIndexKey, value)
 }
 
 // ReadAsset retrieves an asset from the ledger
@@ -188,32 +110,15 @@ func (t *SimpleChaincode) DeleteAsset(ctx contractapi.TransactionContextInterfac
 		return fmt.Errorf("failed to delete asset %s: %v", assetID, err)
 	}
 
-	roleNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Role, asset.ID})
+	stateNameIndexKey, err := ctx.GetStub().CreateCompositeKey(index, []string{asset.Role, asset.ID})
 	if err != nil {
 		return err
 	}
 
 	// Delete index entry
-	return ctx.GetStub().DelState(roleNameIndexKey)
+	return ctx.GetStub().DelState(stateNameIndexKey)
 }
 
-// TransferAsset transfers an asset by setting a new owner name on the asset
-func (t *SimpleChaincode) TransferAsset(ctx contractapi.TransactionContextInterface, assetID, newOwner string) error {
-	asset, err := t.ReadAsset(ctx, assetID)
-	if err != nil {
-		return err
-	}
-
-	asset.Owner = newOwner
-	assetBytes, err := json.Marshal(asset)
-	if err != nil {
-		return err
-	}
-
-	return ctx.GetStub().PutState(assetID, assetBytes)
-}
-
-// constructQueryResponseFromIterator constructs a slice of assets from the resultsIterator
 func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorInterface) ([]*Asset, error) {
 	var assets []*Asset
 	for resultsIterator.HasNext() {
@@ -232,14 +137,6 @@ func constructQueryResponseFromIterator(resultsIterator shim.StateQueryIteratorI
 	return assets, nil
 }
 
-// GetAssetsByRange performs a range query based on the start and end keys provided.
-// Read-only function results are not typically submitted to ordering. If the read-only
-// results are submitted to ordering, or if the query is used in an update transaction
-// and submitted to ordering, then the committing peers will re-execute to guarantee that
-// result sets are stable between endorsement time and commit time. The transaction is
-// invalidated by the committing peers if the result set has changed between endorsement
-// time and commit time.
-// Therefore, range queries are a safe option for performing update transactions based on query results.
 func (t *SimpleChaincode) GetAssetsByRange(ctx contractapi.TransactionContextInterface, startKey, endKey string) ([]*Asset, error) {
 	resultsIterator, err := ctx.GetStub().GetStateByRange(startKey, endKey)
 	if err != nil {
@@ -250,149 +147,9 @@ func (t *SimpleChaincode) GetAssetsByRange(ctx contractapi.TransactionContextInt
 	return constructQueryResponseFromIterator(resultsIterator)
 }
 
-// TransferAssetByColor will transfer assets of a given color to a certain new owner.
-// Uses GetStateByPartialCompositeKey (range query) against color~name 'index'.
-// Committing peers will re-execute range queries to guarantee that result sets are stable
-// between endorsement time and commit time. The transaction is invalidated by the
-// committing peers if the result set has changed between endorsement time and commit time.
-// Therefore, range queries are a safe option for performing update transactions based on query results.
-// Example: GetStateByPartialCompositeKey/RangeQuery
-
-/*color
-func (t *SimpleChaincode) TransferAssetByColor(ctx contractapi.TransactionContextInterface, color, newOwner string) error {
-	// Execute a key range query on all keys starting with 'color'
-	coloredAssetResultsIterator, err := ctx.GetStub().GetStateByPartialCompositeKey(index, []string{color})
-	if err != nil {
-		return err
-	}
-	defer coloredAssetResultsIterator.Close()
-
-	for coloredAssetResultsIterator.HasNext() {
-		responseRange, err := coloredAssetResultsIterator.Next()
-		if err != nil {
-			return err
-		}
-
-		_, compositeKeyParts, err := ctx.GetStub().SplitCompositeKey(responseRange.Key)
-		if err != nil {
-			return err
-		}
-
-		if len(compositeKeyParts) > 1 {
-			returnedAssetID := compositeKeyParts[1]
-			asset, err := t.ReadAsset(ctx, returnedAssetID)
-			if err != nil {
-				return err
-			}
-			asset.Owner = newOwner
-			assetBytes, err := json.Marshal(asset)
-			if err != nil {
-				return err
-			}
-			err = ctx.GetStub().PutState(returnedAssetID, assetBytes)
-			if err != nil {
-				return fmt.Errorf("transfer failed for asset %s: %v", returnedAssetID, err)
-			}
-		}
-	}
-
-	return nil
-}
-*/
-
-// QueryAssetsByOwner queries for assets based on the owners name.
-// This is an example of a parameterized query where the query logic is baked into the chaincode,
-// and accepting a single query parameter (owner).
-// Only available on state databases that support rich query (e.g. CouchDB)
-// Example: Parameterized rich query
-func (t *SimpleChaincode) QueryAssetsByOwner(ctx contractapi.TransactionContextInterface, owner string) ([]*Asset, error) {
-	queryString := fmt.Sprintf(`{"selector":{"docType":"asset","owner":"%s"}}`, owner)
-	return getQueryResultForQueryString(ctx, queryString)
-}
-
-// QueryAssets uses a query string to perform a query for assets.
-// Query string matching state database syntax is passed in and executed as is.
-// Supports ad hoc queries that can be defined at runtime by the client.
-// If this is not desired, follow the QueryAssetsForOwner example for parameterized queries.
-// Only available on state databases that support rich query (e.g. CouchDB)
-// Example: Ad hoc rich query
-func (t *SimpleChaincode) QueryAssets(ctx contractapi.TransactionContextInterface, queryString string) ([]*Asset, error) {
-	return getQueryResultForQueryString(ctx, queryString)
-}
-
-// getQueryResultForQueryString executes the passed in query string.
-// The result set is built and returned as a byte array containing the JSON results.
-func getQueryResultForQueryString(ctx contractapi.TransactionContextInterface, queryString string) ([]*Asset, error) {
-	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
-	if err != nil {
-		return nil, err
-	}
-	defer resultsIterator.Close()
-
-	return constructQueryResponseFromIterator(resultsIterator)
-}
-
-// GetAssetsByRangeWithPagination performs a range query based on the start and end key,
-// page size and a bookmark.
-// The number of fetched records will be equal to or lesser than the page size.
-// Paginated range queries are only valid for read only transactions.
-// Example: Pagination with Range Query
-func (t *SimpleChaincode) GetAssetsByRangeWithPagination(ctx contractapi.TransactionContextInterface, startKey string, endKey string, pageSize int, bookmark string) (*PaginatedQueryResult, error) {
-
-	resultsIterator, responseMetadata, err := ctx.GetStub().GetStateByRangeWithPagination(startKey, endKey, int32(pageSize), bookmark)
-	if err != nil {
-		return nil, err
-	}
-	defer resultsIterator.Close()
-
-	assets, err := constructQueryResponseFromIterator(resultsIterator)
-	if err != nil {
-		return nil, err
-	}
-
-	return &PaginatedQueryResult{
-		Records:             assets,
-		FetchedRecordsCount: responseMetadata.FetchedRecordsCount,
-		Bookmark:            responseMetadata.Bookmark,
-	}, nil
-}
-
-// QueryAssetsWithPagination uses a query string, page size and a bookmark to perform a query
-// for assets. Query string matching state database syntax is passed in and executed as is.
-// The number of fetched records would be equal to or lesser than the specified page size.
-// Supports ad hoc queries that can be defined at runtime by the client.
-// If this is not desired, follow the QueryAssetsForOwner example for parameterized queries.
-// Only available on state databases that support rich query (e.g. CouchDB)
-// Paginated queries are only valid for read only transactions.
-// Example: Pagination with Ad hoc Rich Query
-func (t *SimpleChaincode) QueryAssetsWithPagination(ctx contractapi.TransactionContextInterface, queryString string, pageSize int, bookmark string) (*PaginatedQueryResult, error) {
-
-	return getQueryResultForQueryStringWithPagination(ctx, queryString, int32(pageSize), bookmark)
-}
-
-// getQueryResultForQueryStringWithPagination executes the passed in query string with
-// pagination info. The result set is built and returned as a byte array containing the JSON results.
-func getQueryResultForQueryStringWithPagination(ctx contractapi.TransactionContextInterface, queryString string, pageSize int32, bookmark string) (*PaginatedQueryResult, error) {
-
-	resultsIterator, responseMetadata, err := ctx.GetStub().GetQueryResultWithPagination(queryString, pageSize, bookmark)
-	if err != nil {
-		return nil, err
-	}
-	defer resultsIterator.Close()
-
-	assets, err := constructQueryResponseFromIterator(resultsIterator)
-	if err != nil {
-		return nil, err
-	}
-
-	return &PaginatedQueryResult{
-		Records:             assets,
-		FetchedRecordsCount: responseMetadata.FetchedRecordsCount,
-		Bookmark:            responseMetadata.Bookmark,
-	}, nil
-}
-
-// GetAssetHistory returns the chain of custody for an asset since issuance.
+// 모든 거래기록 반환
+// 삭제된것 : isDeleted = true
+// 모든 수정내역을 저장한다.
 func (t *SimpleChaincode) GetAssetHistory(ctx contractapi.TransactionContextInterface, assetID string) ([]HistoryQueryResult, error) {
 	log.Printf("GetAssetHistory: ID %v", assetID)
 
@@ -438,7 +195,6 @@ func (t *SimpleChaincode) GetAssetHistory(ctx contractapi.TransactionContextInte
 	return records, nil
 }
 
-// AssetExists returns true when asset with given ID exists in the ledger.
 func (t *SimpleChaincode) AssetExists(ctx contractapi.TransactionContextInterface, assetID string) (bool, error) {
 	assetBytes, err := ctx.GetStub().GetState(assetID)
 	if err != nil {
@@ -446,27 +202,6 @@ func (t *SimpleChaincode) AssetExists(ctx contractapi.TransactionContextInterfac
 	}
 
 	return assetBytes != nil, nil
-}
-
-// InitLedger creates the initial set of assets in the ledger.
-func (t *SimpleChaincode) InitLedger(ctx contractapi.TransactionContextInterface) error {
-	assets := []Asset{
-		{DocType: "asset", ID: "asset1", Owner: "Tomoko", REC: 300, KRW: 5, Role: "buyer"},
-		{DocType: "asset", ID: "asset2", Owner: "Brad", REC: 400, KRW: 5, Role: "buyer"},
-		{DocType: "asset", ID: "asset3", Owner: "Jin Soo", REC: 500, KRW: 5, Role: "buyer"},
-		{DocType: "asset", ID: "asset4", Owner: "Max", REC: 600, KRW: 5, Role: "buyer"},
-		{DocType: "asset", ID: "asset5", Owner: "Adriana", REC: 700, KRW: 5, Role: "seller"},
-		{DocType: "asset", ID: "asset6", Owner: "Michel", REC: 800, KRW: 5, Role: "buyer"},
-	}
-
-	for _, asset := range assets {
-		err := t.CreateAsset(ctx, asset.ID, asset.Owner, asset.REC, asset.KRW, asset.Role)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func main() {
@@ -481,8 +216,6 @@ func main() {
 }
 
 func (t *SimpleChaincode) GetAllAssets(ctx contractapi.TransactionContextInterface) ([]*Asset, error) {
-	// range query with empty string for startKey and endKey does an
-	// open-ended query of all assets in the chaincode namespace.
 	resultsIterator, err := ctx.GetStub().GetStateByRange("", "")
 	if err != nil {
 		return nil, err
@@ -507,7 +240,7 @@ func (t *SimpleChaincode) GetAllAssets(ctx contractapi.TransactionContextInterfa
 	return assets, nil
 }
 
-func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterface, assetID, owner string, REC int, KRW int, role string) error {
+func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterface, assetID string, REC int, KRW int, RTREC int, RTKRW int, RTpeople string, role string) error {
 	exists, err := t.AssetExists(ctx, assetID)
 	if err != nil {
 		return err
@@ -516,14 +249,15 @@ func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterfac
 		return fmt.Errorf("the asset %s does not exist", assetID)
 	}
 
-	// overwriting original asset with new asset
 	asset := Asset{
-		DocType: "asset",
-		ID:      assetID,
-		Owner:   owner,
-		REC:     REC,
-		KRW:     KRW,
-		Role:    role,
+		DocType:  "asset",
+		ID:       assetID,
+		REC:      REC,
+		KRW:      KRW,
+		RTREC:    RTREC,
+		RTKRW:    RTKRW,
+		RTpeople: RTpeople,
+		Role:     role,
 	}
 	assetJSON, err := json.Marshal(asset)
 	if err != nil {
