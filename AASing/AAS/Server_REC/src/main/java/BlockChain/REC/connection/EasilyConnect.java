@@ -102,6 +102,12 @@ public class EasilyConnect {
         );
     }
 
+    /*여기부터 market*/
+
+
+    
+
+
     /**
      * This type of transaction would typically only be getAssets once by an application
      * the first time it was started after its initial deployment. A new version of

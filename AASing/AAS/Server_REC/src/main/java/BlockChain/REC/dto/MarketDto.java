@@ -85,6 +85,6 @@ public class MarketDto {
         this.time = time;
     }
     public MarketDto(){
-        
+
     }
 }
