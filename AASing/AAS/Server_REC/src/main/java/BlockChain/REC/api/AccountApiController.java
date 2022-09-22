@@ -1,50 +1,22 @@
 package BlockChain.REC.api;
 
-import BlockChain.REC.api.Response.AccountResponse;
 import BlockChain.REC.api.Response.CommonResponse;
-import BlockChain.REC.connection.App;
-import BlockChain.REC.connection.BlockChainConnect;
-import BlockChain.REC.connection.Grpc;
+import BlockChain.REC.connection.EasilyConnect;
 import BlockChain.REC.domain.Account;
 import BlockChain.REC.dto.AssetDto;
 import BlockChain.REC.dto.MemberDto;
 import BlockChain.REC.repository.AccountRepository;
 import BlockChain.REC.service.AccountService;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import io.grpc.ManagedChannel;
-import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
-import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.cert.CertificateException;
-import java.time.Instant;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.json.JSONParser;
-import org.hyperledger.fabric.client.CommitException;
-import org.hyperledger.fabric.client.CommitStatusException;
-import org.hyperledger.fabric.client.Contract;
-import org.hyperledger.fabric.client.EndorseException;
-import org.hyperledger.fabric.client.Gateway;
-import org.hyperledger.fabric.client.GatewayException;
-import org.hyperledger.fabric.client.SubmitException;
-import org.hyperledger.fabric.client.identity.Identities;
-import org.hyperledger.fabric.client.identity.Identity;
-import org.hyperledger.fabric.client.identity.Signer;
-import org.hyperledger.fabric.client.identity.Signers;
-import org.hyperledger.fabric.client.identity.X509Identity;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -81,29 +53,53 @@ public class AccountApiController {
         return new CommonResponse(result,SUCCESS_STATUS_CODE,msg);
     }
 
-
-    @GetMapping("/api/assets")
-    public List<AssetDto> getAllAssets() throws Exception {
-        String User = "User1";
-        Account account = accountRepository.findByUsername(User);
+    //여기부터 api
+    @GetMapping("/api/getall/{id}")
+    public List<AssetDto> testConnect(@PathVariable String id) throws Exception {
+        Account account = accountRepository.findByUsername(id);
         MemberDto memberDto = new MemberDto(account);
-        JsonArray Assets = new App(memberDto).main().getAsJsonArray();
+        EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+        JsonArray Assets = easilyConnect.getAssets().getAsJsonArray();
         List<AssetDto> assetDtoList = new ArrayList<>();
         for(int i=0;i<Assets.size();++i){
             JsonObject asset = Assets.get(i).getAsJsonObject();
             assetDtoList.add(new AssetDto(asset));
         }
         return assetDtoList;
-
-//        BlockChainConnect blockChainConnect = new BlockChainConnect(memberDto);
-//        Gateway gateway = blockChainConnect.connection();
-//        try {
-//            new Grpc(gateway,memberDto).run();
-//        } finally {
-//            blockChainConnect.closeChannel();
-//        }
-
+    }
+    @GetMapping("/api/logininfo/{id}")
+    public AssetDto getLogininfo(@PathVariable String id) throws Exception{
+        Account account = accountRepository.findByUsername(id);
+        MemberDto memberDto = new MemberDto(account);
+        EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+        JsonElement Assets = easilyConnect.getAssetByID();
+        AssetDto assetDto = new AssetDto(Assets.getAsJsonObject());
+        return assetDto;
     }
 
+
+
+    @PostMapping ("/api/createAsset/{id}")
+    public String createAssets(@PathVariable String id , @RequestBody @Valid AssetDto assetDto) throws Exception {
+        Account account = accountRepository.findByUsername(id);
+        MemberDto memberDto = new MemberDto(account);
+        System.out.println(assetDto);
+        try {
+            EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+            easilyConnect.createAsset(assetDto);
+        } finally {
+            return "good";
+        }
+//        작성예시
+//        {
+//            "ID" : "asset5",
+//                "REC" : 10,
+//                "KRW" : 2("(0,
+//                "RTKRW" : 30,
+//                "RTpeople" : "sex",
+//                "Role" : "bottom",
+//                "RTREC" : 20
+//        }
+    }
 
 }
