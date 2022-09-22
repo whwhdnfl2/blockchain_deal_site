@@ -68,6 +68,11 @@ public class AccountApiController {
         }
         return assetDtoList;
     }
+    @GetMapping("api/marketMaterial")
+    public String MarketMaterial() throws Exception{
+        System.out.println("whjat");
+    }
+
 
     @GetMapping("/api/getHistory/{id}")
     public String getHistory(@PathVariable String id) throws Exception{
