@@ -1,6 +1,7 @@
 package BlockChain.REC.connection;
 
 import BlockChain.REC.dto.AssetDto;
+import BlockChain.REC.dto.MarketDto;
 import BlockChain.REC.dto.MemberDto;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -103,9 +104,13 @@ public class EasilyConnect {
     }
 
     /*여기부터 market*/
+    public JsonElement getMarket() throws GatewayException, CommitException{
+        var result = contract.evaluateTransaction("GetAllAssets");
+        System.out.println(prettyJson(result));
+        return prettyJson(result);
+    }
 
 
-    
 
 
     /**

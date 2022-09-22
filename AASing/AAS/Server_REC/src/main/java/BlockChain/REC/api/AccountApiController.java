@@ -5,6 +5,7 @@ import BlockChain.REC.connection.EasilyConnect;
 import BlockChain.REC.domain.Account;
 import BlockChain.REC.dto.AssetDto;
 import BlockChain.REC.dto.HistoryDto;
+import BlockChain.REC.dto.MarketDto;
 import BlockChain.REC.dto.MemberDto;
 import BlockChain.REC.repository.AccountRepository;
 import BlockChain.REC.service.AccountService;
@@ -68,23 +69,14 @@ public class AccountApiController {
         }
         return assetDtoList;
     }
-//    @GetMapping("api/marketMaterial")
-//    public String MarketMaterial() throws Exception{
-//        System.out.println("whjat");
-//
-//    }
-
-
     @GetMapping("/api/getHistory/{id}")
     public String getHistory(@PathVariable String id) throws Exception{
         Account account = accountRepository.findByUsername(id);
         MemberDto memberDto = new MemberDto(account);
         EasilyConnect easilyConnect = new EasilyConnect(memberDto);
         JsonArray Assets = easilyConnect.getAssetHistory().getAsJsonArray();
-
         return Assets.toString();
     }
-
     @GetMapping("/api/logininfo/{id}")
     public AssetDto getLogininfo(@PathVariable String id) throws Exception{
         Account account = accountRepository.findByUsername(id);
@@ -94,9 +86,6 @@ public class AccountApiController {
         AssetDto assetDto = new AssetDto(Assets.getAsJsonObject());
         return assetDto;
     }
-
-
-
     @PostMapping ("/api/createAsset/{id}")
     public String createAssets(@PathVariable String id , @RequestBody @Valid AssetDto assetDto) throws Exception {
         Account account = accountRepository.findByUsername(id);
@@ -119,5 +108,22 @@ public class AccountApiController {
 //                "RTREC" : 20
 //        }
     }
-
+    // 여기서부터 Market API
+    @GetMapping("/api/Market")
+    public List<MarketDto> getMarket() throws Exception{
+    Account account = accountRepository.findByUsername("koreapower_admin");
+    MemberDto memberDto = new MemberDto(account);
+    EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+    JsonArray Assets = easilyConnect.getMarket().getAsJsonArray();
+    List<MarketDto> marketDtoList = new ArrayList<>();
+        for(int i=0;i<Assets.size();++i){
+        JsonObject asset = Assets.get(i).getAsJsonObject();
+        MarketDto marketDto = new MarketDto(asset);
+        System.out.println(marketDto.getState());
+        if(marketDto.getState().equals("SALE")){
+            marketDtoList.add(marketDto);
+        }
+    }
+    return marketDtoList;
+    }
 }

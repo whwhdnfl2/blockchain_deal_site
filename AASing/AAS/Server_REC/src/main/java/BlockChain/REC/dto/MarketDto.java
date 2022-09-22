@@ -1,5 +1,7 @@
 package BlockChain.REC.dto;
 
+import com.google.gson.JsonObject;
+
 public class MarketDto {
     private String DocType;
     private String ID;
@@ -84,7 +86,14 @@ public class MarketDto {
         this.state = state;
         this.time = time;
     }
-    public MarketDto(){
-
+    public MarketDto(JsonObject asset){
+        this.DocType = asset.get("docType").getAsString();
+        this.ID = asset.get("ID").getAsString();
+        this.Seller = asset.get("seller").getAsString();
+        this.Buyer = asset.get("buyer").getAsString();
+        this.REC = asset.get("REC").getAsInt();
+        this.KRW = asset.get("KRW").getAsInt();
+        this.state = asset.get("State").getAsString();
+        this.time = asset.get("Time").getAsString();
     }
 }
