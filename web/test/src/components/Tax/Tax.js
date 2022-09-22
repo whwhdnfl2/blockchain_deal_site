@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Button } from "@mui/material";
 import { useState } from "react";
-//import ErrorSellPage from "./ErrorSellPage";
+import ErrorTaxPage from "./ErrorTaxPage";
 
 const style = {
   position: "absolute",
@@ -19,14 +19,18 @@ const style = {
 };
 
 const Tax = (props) => {
-//   const [isValid, setIsValid] = useState(false);
+  const [taxIsValid, setTaxIsValid] = useState(false);
   const [insertTax, setInsertTax] = useState(0);
 
 
   const submitHandler = (event) => {
     event.preventDefault();
+    if(0 < insertTax < 100){
+      setTaxIsValid(true);
+      return;
+    }
     props.onTax(insertTax);
-    props.handleTaxClose()
+    props.handleTaxClose();
   };
 
   const taxChangeHandler = (event) => {
@@ -35,30 +39,19 @@ const Tax = (props) => {
   }
 
   async function postTaxData(){
-    //
-    //
-    //
-    //
-    // post로 tax 데이터 보냄
-    //
-    //
-    //
-    //
-
-    // const SellData = {
-    //   id: props.myID,
-    //   rec: insertRec,
-    //   asset: insertPrice,
-    // }
-    // const response = await fetch('https://react-http-aa86b-default-rtdb.firebaseio.com/good.json', {
-    //   method: 'POST',
-    //   body: JSON.stringify(SellData)
-    // });
-    // props.onTax(insertTax)
-    // const data = await response.json();
-    // console.log(JSON.stringify(data));
-    // console.log("postsell");
-    console.log("ssibal");
+    const SellData = {
+      id: props.myID,
+      rec: insertRec,
+      asset: insertPrice,
+    }
+    const response = await fetch('https://react-http-aa86b-default-rtdb.firebaseio.com/good.json', {
+      method: 'POST',
+      body: JSON.stringify(SellData)
+    });
+    props.onTax(insertTax)
+    const data = await response.json();
+    console.log(JSON.stringify(data));
+    console.log("postsell");
   }
 
   return (
@@ -83,7 +76,7 @@ const Tax = (props) => {
           </Typography>
         </Box>  
       </Modal>
-      {/* <ErrorSellPage open={isValid} onValid={setIsValid}></ErrorSellPage> */}
+      {taxIsValid && <ErrorSellPage open={taxIsValid} onValid={setTaxIsValid}></ErrorSellPage>}
     </div>
   );
 };
