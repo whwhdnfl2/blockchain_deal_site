@@ -68,10 +68,11 @@ public class AccountApiController {
         }
         return assetDtoList;
     }
-    @GetMapping("api/marketMaterial")
-    public String MarketMaterial() throws Exception{
-        System.out.println("whjat");
-    }
+//    @GetMapping("api/marketMaterial")
+//    public String MarketMaterial() throws Exception{
+//        System.out.println("whjat");
+//
+//    }
 
 
     @GetMapping("/api/getHistory/{id}")
@@ -80,11 +81,7 @@ public class AccountApiController {
         MemberDto memberDto = new MemberDto(account);
         EasilyConnect easilyConnect = new EasilyConnect(memberDto);
         JsonArray Assets = easilyConnect.getAssetHistory().getAsJsonArray();
-//        List<HistoryDto> historyDtoList = new ArrayList<>();
-//        for(int i=0;i<Assets.size();++i){
-//            JsonObject asset = Assets.get(i).getAsJsonObject();
-//            historyDtoList.add(new HistoryDto(asset));
-//        }
+
         return Assets.toString();
     }
 
