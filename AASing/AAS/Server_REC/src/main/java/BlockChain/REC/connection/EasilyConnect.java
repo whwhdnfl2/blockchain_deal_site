@@ -69,23 +69,24 @@ public class EasilyConnect {
         }
     }
 
-    public JsonElement getAssets() throws GatewayException {
+    public JsonElement GetAllAssets() throws GatewayException {
         var result = contract.evaluateTransaction("GetAllAssets");
-        System.out.println(LocalDateTime.now().toString());
-
+        System.out.println(prettyJson(result));
         return prettyJson(result);
     }
 
     public JsonElement getAssetByID() throws GatewayException{
         System.out.println(this.memberDto.toString());
         var result = contract.evaluateTransaction("ReadAsset",this.memberDto.getID());
+        System.out.println(prettyJson(result));
+
         return prettyJson(result);
     }
 
-
-    public JsonElement getAllHistory(MemberDto memberDto) throws GatewayException{
+    public JsonElement getAssetHistory() throws GatewayException{
         System.out.println("MspID : %s".format(memberDto.getMspID()));
-        var result = contract.evaluateTransaction("GetAssetHistory", memberDto.getOriginal_id());
+        var result = contract.evaluateTransaction("GetAssetHistory", this.memberDto.getID());
+        System.out.println(prettyJson(result));
         return prettyJson(result);
     }
 

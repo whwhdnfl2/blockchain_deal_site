@@ -4,6 +4,7 @@ import BlockChain.REC.api.Response.CommonResponse;
 import BlockChain.REC.connection.EasilyConnect;
 import BlockChain.REC.domain.Account;
 import BlockChain.REC.dto.AssetDto;
+import BlockChain.REC.dto.HistoryDto;
 import BlockChain.REC.dto.MemberDto;
 import BlockChain.REC.repository.AccountRepository;
 import BlockChain.REC.service.AccountService;
@@ -59,7 +60,7 @@ public class AccountApiController {
         Account account = accountRepository.findByUsername(id);
         MemberDto memberDto = new MemberDto(account);
         EasilyConnect easilyConnect = new EasilyConnect(memberDto);
-        JsonArray Assets = easilyConnect.getAssets().getAsJsonArray();
+        JsonArray Assets = easilyConnect.GetAllAssets().getAsJsonArray();
         List<AssetDto> assetDtoList = new ArrayList<>();
         for(int i=0;i<Assets.size();++i){
             JsonObject asset = Assets.get(i).getAsJsonObject();
@@ -67,6 +68,21 @@ public class AccountApiController {
         }
         return assetDtoList;
     }
+
+    @GetMapping("/api/getHistory/{id}")
+    public String getHistory(@PathVariable String id) throws Exception{
+        Account account = accountRepository.findByUsername(id);
+        MemberDto memberDto = new MemberDto(account);
+        EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+        JsonArray Assets = easilyConnect.getAssetHistory().getAsJsonArray();
+//        List<HistoryDto> historyDtoList = new ArrayList<>();
+//        for(int i=0;i<Assets.size();++i){
+//            JsonObject asset = Assets.get(i).getAsJsonObject();
+//            historyDtoList.add(new HistoryDto(asset));
+//        }
+        return Assets.toString();
+    }
+
     @GetMapping("/api/logininfo/{id}")
     public AssetDto getLogininfo(@PathVariable String id) throws Exception{
         Account account = accountRepository.findByUsername(id);
