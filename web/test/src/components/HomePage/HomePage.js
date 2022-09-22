@@ -56,6 +56,9 @@ const HomePage = () => {
   const [role, setRole] = useState("buyer");
 
 
+  const [informationRow, setInformationRow] = useState([]);
+
+
   const BuyerLoginHandler = () => {
     setIsLoginBuyer(true);
   };
@@ -89,11 +92,7 @@ const HomePage = () => {
   };
   const PageHanderTwo = () => {
     setPage(2);
-  };
-  const PageHanderThree = () => {
-    setIsLoading(true);
-    setPage(3);
-    fetch("https://swapi.dev/api/films")
+    fetch(`/api/`)
     .then((response) => {
       return response.json();
     })
@@ -110,21 +109,43 @@ const HomePage = () => {
       setIsLoading(false);
       console.log("homepagebuyshow");
     });
+    
   };
-  const PageHanderFour = () => {
+  const PageHanderThree = () => {
     setIsLoading(true);
-    setPage(4);
-    fetch("https://swapi.dev/api/films")
+    setPage(3);
+    fetch(`/api/`)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      const transformedData = data.results.map((movieData) => {
+      const transformedData = data.map((marketData) => {
         return {
-          rec: movieData.episode_id,
-          num: movieData.director,
-          allRec: movieData.title,
-          id: movieData.release_date,
+          KRW: marketData.KRW,
+          REC: marketData.REC,
+          allKRW: marketData.KRW * marketData.REC,
+          id: marketData.seller,
+        };
+      });
+      setSellRows(transformedData);
+      setIsLoading(false);
+      console.log("homepagebuyshow");
+    });
+  };
+  const PageHanderFour = () => {
+    setIsLoading(true);
+    setPage(4);
+    fetch(`/api/`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.KRW,
+          REC: marketData.REC,
+          allKRW: marketData.KRW * marketData.REC,
+          id: marketData.seller,
         };
       });
       setSellRows(transformedData);

@@ -49,7 +49,7 @@ const SellPage = (props) => {
       rec: insertRec,
       asset: insertPrice,
     }
-    const response = await fetch('http://local:8080/api/', {
+    const response = await fetch(`/api/`, {
       method: 'POST',
       body: JSON.stringify(SellData)
     });

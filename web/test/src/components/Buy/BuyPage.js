@@ -46,7 +46,7 @@ const BuyPage = (props) => {
       rec: insertRec, //입력한 rec 갯수
       asset: props.buyRec, //rec 개당 가격
     }
-    const response = await fetch('http://local:8080/api/', {
+    const response = await fetch(`/api/`, {
       method: 'POST',
       body: JSON.stringify(SellData)
     });

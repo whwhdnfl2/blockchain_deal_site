@@ -44,7 +44,7 @@ const Tax = (props) => {
       rec: insertRec,
       asset: insertPrice,
     }
-    const response = await fetch('https://react-http-aa86b-default-rtdb.firebaseio.com/good.json', {
+    const response = await fetch(`/api/`, {
       method: 'POST',
       body: JSON.stringify(SellData)
     });

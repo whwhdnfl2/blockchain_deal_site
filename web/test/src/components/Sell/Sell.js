@@ -20,7 +20,7 @@ const Sell = (props) => {
 
   const showData = () => {
     props.onIsLoading(true);
-    fetch("http://local:8080/api/")
+    fetch(`/api/`)
       .then((response) => {
         return response.json();
       })
