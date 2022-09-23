@@ -22,9 +22,6 @@ type Asset struct {
 	ID       string `json:"ID"`
 	REC      int    `json:"REC"`
 	KRW      int    `json: "KRW"`
-	RTREC    int    `json: "RTREC"`
-	RTKRW    int    `json: "RTKRW"`
-	RTpeople string `json: "RTpeople"`
 	Role     string `json: "role"`
 }
 
@@ -41,7 +38,7 @@ type PaginatedQueryResult struct {
 	Bookmark            string   `json:"bookmark"`
 }
 
-func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterface, assetID string, REC int, KRW int, RTREC int, RTKRW int, RTpeople string, role string) error {
+func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterface, assetID string, REC int, KRW int, role string) error {
 	exists, err := t.AssetExists(ctx, assetID)
 	if err != nil {
 		return fmt.Errorf("failed to get asset: %v", err)
@@ -55,9 +52,6 @@ func (t *SimpleChaincode) CreateAsset(ctx contractapi.TransactionContextInterfac
 		ID:       assetID,  //키
 		REC:      REC,      //보유 REC 개수
 		KRW:      KRW,      //보유 원
-		RTREC:    RTREC,    //거래 시 REC개수 저장
-		RTKRW:    RTKRW,    //거래 원 저장
-		RTpeople: RTpeople, //거래 상대 저장
 		Role:     role,     //buyer , seller 저장
 	}
 	assetBytes, err := json.Marshal(asset)
@@ -240,7 +234,7 @@ func (t *SimpleChaincode) GetAllAssets(ctx contractapi.TransactionContextInterfa
 	return assets, nil
 }
 
-func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterface, assetID string, REC int, KRW int, RTREC int, RTKRW int, RTpeople string, role string) error {
+func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterface, assetID string, REC int, KRW int, role string) error {
 	exists, err := t.AssetExists(ctx, assetID)
 	if err != nil {
 		return err
@@ -254,9 +248,6 @@ func (t *SimpleChaincode) UpdateAsset(ctx contractapi.TransactionContextInterfac
 		ID:       assetID,
 		REC:      REC,
 		KRW:      KRW,
-		RTREC:    RTREC,
-		RTKRW:    RTKRW,
-		RTpeople: RTpeople,
 		Role:     role,
 	}
 	assetJSON, err := json.Marshal(asset)

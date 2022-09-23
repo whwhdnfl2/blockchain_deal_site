@@ -13,6 +13,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Store from "@mui/icons-material/Store";
 import Home from "@mui/icons-material/Home";
+import Paid from "@mui/icons-material/Paid";
 import PermIdentity from "@mui/icons-material/PermIdentity";
 import Login from "../Login/Login";
 import { useState } from "react";
@@ -24,6 +25,7 @@ import Sell from "../Sell/Sell";
 import ErrorLogin from "../Login/ErrorLogin";
 import Tax from "../Tax/Tax";
 import InnerPage from "./InnerPage";
+import ChargingPage from "../ChargingPage/ChargingPage";
 
 
 const drawerWidth = 240;
@@ -59,6 +61,16 @@ const HomePage = () => {
 
   const [informationRow, setInformationRow] = useState([]);
 
+  const [chargingOpen, setChargingOpen] = useState(false);
+
+  const handleChargingOpen = () =>{
+    setChargingOpen(true);
+  }
+
+  const handleChargingClose = () =>{
+    setChargingOpen(false);
+  }
+
 
   const BuyerLoginHandler = () => {
     setIsLoginBuyer(true);
@@ -91,39 +103,33 @@ const HomePage = () => {
   const PageHanderOne = () => {
     setPage(1);
   };
-  const PageHanderTwo = () => {
-    setPage(2);
-    fetch(`/api/`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const transformedData = data.map((marketData) => {
-        return {
-          KRW: marketData.KRW,
-          REC: marketData.REC,
-          allKRW: marketData.KRW * marketData.REC,
-          id: marketData.seller,
-        };
-      });
-      setInformationRow(transformedData);
-    });
+
+  async function PageHanderTwo()  {
     
+    setPage(2);
+    const SellData = `${myID}`;
+    const response = await fetch(`/api/Market/myinfo`,{
+      method: 'POST',
+      body: SellData
+    });
+    const data = await response.json();
+    console.log(JSON.stringify(data));
+    setInformationRow(data);
   };
   const PageHanderThree = () => {
     setIsLoading(true);
     setPage(3);
-    fetch(`/api/`)
+    fetch(`/api/Market`)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
       const transformedData = data.map((marketData) => {
         return {
-          KRW: marketData.KRW,
-          REC: marketData.REC,
-          allKRW: marketData.KRW * marketData.REC,
-          id: marketData.seller,
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          allKRW: marketData.krw * marketData.rec,
+          id: marketData.id,
         };
       });
       setSellRows(transformedData);
@@ -134,17 +140,17 @@ const HomePage = () => {
   const PageHanderFour = () => {
     setIsLoading(true);
     setPage(4);
-    fetch(`/api/`)
+    fetch(`/api/Market`)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
       const transformedData = data.map((marketData) => {
         return {
-          KRW: marketData.KRW,
-          REC: marketData.REC,
-          allKRW: marketData.KRW * marketData.REC,
-          id: marketData.seller,
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          allKRW: marketData.krw * marketData.rec,
+          id: marketData.id,
         };
       });
       setSellRows(transformedData);
@@ -156,6 +162,11 @@ const HomePage = () => {
   const PageHandlerFive =() =>{
     setPage(5);
     handleTaxOpen();
+  }
+
+  const PageHandlerSix =() =>{
+    setPage(6);
+    handleChargingOpen();
   }
 
   return (
@@ -190,7 +201,7 @@ const HomePage = () => {
         <Toolbar />
         <Divider />
         <List>
-          {(isLoginBuyer || isLoginSeller) && (["홈페이지", "내 거래내역", "REC 구매", "REC 판매"].map(
+          {(isLoginBuyer || isLoginSeller) && (["홈페이지", "내 거래내역", "REC 구매", "REC 판매", "환전 및 REC충전"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
@@ -214,6 +225,12 @@ const HomePage = () => {
                 {index === 3 && (
                   <ListItemButton disabled={!isLoginSeller} onClick={PageHanderFour}>
                     <ListItemIcon>{<Store />}</ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                )}
+                {index === 4 && (
+                  <ListItemButton disabled={!(isLoginSeller||isLoginBuyer)} onClick={PageHandlerSix}>
+                    <ListItemIcon>{<Paid />}</ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
                 )}
@@ -285,11 +302,12 @@ const HomePage = () => {
         {!(isLoginBuyer || isLoginSeller || isLoginAdmin || isLoginAdminTax) && <Login rec={rec} onRec={setRec} onAsset={setAsset} asset={asset} onRole={setRole} onSellerLogin={SellerLoginHandler} onBuyerLogin={BuyerLoginHandler} onAdminLogin={AdminLoginHandler} onTaxAdminLogin={TaxAdminLoginHandler} onID={MyIDHander} onTax={setTax} isValid={loginIsValid} onValid={setLoginIsValid}/>}
         {(isLoginBuyer || isLoginSeller) && (
           <Card>
-            <p>{myID}</p>
+            <h2>내 정보</h2>
+            <p>ID: {myID}</p>
             <p>role: {role}</p>
-            <p>보유 자산: {asset} </p>
-            <p>보유 REC: {rec}</p>
-            <p>현재 세율: {tax}</p>
+            <p>보유 자산: {asset}원 </p>
+            <p>보유 REC: {rec}개</p>
+            <p>현재 세율: {tax}%</p>
             <Button onClick={LogoutHandler}>Logout</Button>
           </Card>
         )}
@@ -317,9 +335,10 @@ const HomePage = () => {
         <Toolbar />
         {page === 1 && <InnerPage></InnerPage>}
         {page === 2 && <MyInformationTable informationRow={informationRow} onInformationRow={setInformationRow}/>}
-        {page === 3 && <Buy isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
+        {page === 3 && <Buy tax={tax} isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {page === 4 && <Sell isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {page === 5 && <Tax open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
+        {page === 6 && <ChargingPage rec={rec} onRec={setRec} asset={asset} onAsset={setAsset} myID={myID} open={chargingOpen} onChargingClose={handleChargingClose} onChargingOpen={handleChargingOpen}></ChargingPage>}
       </Box>
     </Box>
     <ErrorLogin open={loginIsValid} onValid={setLoginIsValid}></ErrorLogin>
