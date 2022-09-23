@@ -9,4 +9,4 @@ const InnerPage = () => {
     )
 }
 
-export default InnerPage;a
+export default InnerPage;
