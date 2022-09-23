@@ -1,4 +1,4 @@
-package BlockChain.REC.api.Response;
+package BlockChain.REC.api;
 
 import BlockChain.REC.connection.EasilyConnect;
 import BlockChain.REC.domain.Account;
@@ -48,7 +48,7 @@ public class MarketApiController {
         }
         return marketDtoList;
     }
-    
+
     //진짜 단순하게 문자열만 보내면 됨 따음표도 팰요없음
     @PostMapping("/api/Market/myinfo")
     public List<MarketDto> getMyInfo(@RequestBody @Valid String ID) throws Exception{

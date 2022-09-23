@@ -1,4 +1,4 @@
-package BlockChain.REC.api.Response;
+package BlockChain.REC.api;
 
 import BlockChain.REC.connection.EasilyConnect;
 import BlockChain.REC.domain.Account;
