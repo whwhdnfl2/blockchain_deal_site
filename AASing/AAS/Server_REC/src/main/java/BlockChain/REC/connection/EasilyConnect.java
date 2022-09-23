@@ -76,11 +76,10 @@ public class EasilyConnect {
         return prettyJson(result);
     }
 
-    public JsonElement getAssetByID() throws GatewayException{
+    public JsonElement getAssetByID(String id) throws GatewayException{
         System.out.println(this.memberDto.toString());
-        var result = contract.evaluateTransaction("ReadAsset",this.memberDto.getID());
+        var result = contract.evaluateTransaction("ReadAsset",id);
         System.out.println(prettyJson(result));
-
         return prettyJson(result);
     }
 
@@ -103,6 +102,25 @@ public class EasilyConnect {
         );
     }
 
+//    public void UpdateAsset(AssetDto assetDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
+//        contract.submitTransaction("UpdateAsset",
+//                assetDto.getID();
+//                asset.
+//                )
+       public void UpdateAsset(MarketDto marketDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
+        contract.submitTransaction("UpdateAsset",
+                marketDto.getID(),
+                marketDto.getSeller(),
+                marketDto.getBuyer(),
+                Integer.toString(marketDto.getREC()),
+                Integer.toString(marketDto.getKRW()),
+                marketDto.getState(),
+                marketDto.getTime()
+                );
+    }
+
+
+
     /*여기부터 market*/
     public JsonElement getMarket() throws GatewayException, CommitException{
         var result = contract.evaluateTransaction("GetAllAssets");
@@ -110,59 +128,15 @@ public class EasilyConnect {
         return prettyJson(result);
     }
 
-
-
-
-    /**
-     * This type of transaction would typically only be getAssets once by an application
-     * the first time it was started after its initial deployment. A new version of
-     * the chaincode deployed later would likely not need to getAssets an "init" function.
-     */
     private void initLedger() throws EndorseException, SubmitException, CommitStatusException, CommitException {
-        System.out.println("\n--> Submit Transaction: InitLedger, function creates the initial set of assets on the ledger");
-
         contract.submitTransaction("InitLedger");
-
-        System.out.println("*** Transaction committed successfully");
     }
 
     private JsonElement prettyJson(final byte[] json) {
         return prettyJson(new String(json, StandardCharsets.UTF_8));
     }
-
     private JsonElement prettyJson(final String json) {
         return JsonParser.parseString(json);
     }
 
-    /**
-     * submitTransaction() will throw an error containing details of any error
-     * responses from the smart contract.
-     */
-    private void updateNonExistentAsset() {
-        try {
-            System.out.println("\n--> Submit Transaction: UpdateAsset asset70, asset70 does not exist and should return an error");
-
-            contract.submitTransaction("UpdateAsset", "asset70", "blue", "5", "Tomoko", "300");
-
-            System.out.println("******** FAILED to return an error");
-        } catch (EndorseException | SubmitException | CommitStatusException e) {
-            System.out.println("*** Successfully caught the error: ");
-            e.printStackTrace(System.out);
-            System.out.println("Transaction ID: " + e.getTransactionId());
-
-            var details = e.getDetails();
-            if (!details.isEmpty()) {
-                System.out.println("Error Details:");
-                // for (var detail : details) {
-                // 	System.out.println("- address: " + detail.getAddress() + ", mspId: " + detail.getMspId()
-                // 			+ ", message: " + detail.getMessage());
-                // }
-            }
-        } catch (CommitException e) {
-            System.out.println("*** Successfully caught the error: " + e);
-            e.printStackTrace(System.out);
-            System.out.println("Transaction ID: " + e.getTransactionId());
-            System.out.println("Status code: " + e.getCode());
-        }
-    }
 }

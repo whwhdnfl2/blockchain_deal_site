@@ -82,7 +82,7 @@ public class AccountApiController {
         Account account = accountRepository.findByUsername(id);
         MemberDto memberDto = new MemberDto(account);
         EasilyConnect easilyConnect = new EasilyConnect(memberDto);
-        JsonElement Assets = easilyConnect.getAssetByID();
+        JsonElement Assets = easilyConnect.getAssetByID(memberDto.getID());
         AssetDto assetDto = new AssetDto(Assets.getAsJsonObject());
         return assetDto;
     }
