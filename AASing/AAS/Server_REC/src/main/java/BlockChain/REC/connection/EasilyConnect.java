@@ -96,15 +96,11 @@ public class EasilyConnect {
                 assetDto.getID(),
                 Integer.toString(assetDto.getREC()),
                 Integer.toString(assetDto.getKRW()),
-                Integer.toString(assetDto.getRTKRW()),
-                Integer.toString(assetDto.getRTREC()),
-                assetDto.getRTpeople(),
                 assetDto.getRole()
         );
     }
     public void createAsset(MarketDto marketDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
         contract.submitTransaction("CreateAsset",
-                marketDto.getDocType(),
                 marketDto.getID(),
                 marketDto.getSeller(),
                 marketDto.getBuyer(),
@@ -115,11 +111,6 @@ public class EasilyConnect {
         );
     }
 
-//    public void UpdateAsset(AssetDto assetDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
-//        contract.submitTransaction("UpdateAsset",
-//                assetDto.getID();
-//                asset.
-//                )
        public void UpdateAsset(MarketDto marketDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
         contract.submitTransaction("UpdateAsset",
                 marketDto.getID(),
@@ -134,13 +125,9 @@ public class EasilyConnect {
     public void UpdateAsset(AssetDto assetDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
         contract.submitTransaction("UpdateAsset",
                 assetDto.getID(),
-                assetDto.getREC(),
-                assetDto.getBuyer(),
                 Integer.toString(assetDto.getREC()),
                 Integer.toString(assetDto.getKRW()),
-                assetDto.getState(),
-                assetDto.getTime()
-                );
+                assetDto.getRole());
     }
 
 

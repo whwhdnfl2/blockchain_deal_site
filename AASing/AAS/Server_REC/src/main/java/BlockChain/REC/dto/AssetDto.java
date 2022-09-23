@@ -11,8 +11,7 @@ public class AssetDto {
   private String ID;
   private int REC;
   private int KRW;
-  private int RTKRW;
-  private String RTpeople;
+
 
     @Override
     public String toString() {
@@ -21,15 +20,11 @@ public class AssetDto {
                 ", ID='" + ID + '\'' +
                 ", REC=" + REC +
                 ", KRW=" + KRW +
-                ", RTKRW=" + RTKRW +
-                ", RTpeople='" + RTpeople + '\'' +
                 ", Role='" + Role + '\'' +
-                ", RTREC=" + RTREC +
                 '}';
     }
 
     private String Role;
-  private int RTREC;
 
   public AssetDto(JsonObject asset) {
         this.docType = asset.get("docType").getAsString();
@@ -37,9 +32,6 @@ public class AssetDto {
         this.REC = asset.get("REC").getAsInt();
         this.KRW = asset.get("KRW").getAsInt();
         this.Role = asset.get("Role").getAsString();
-        this.RTKRW = asset.get("RTKRW").getAsInt();
-        this.RTREC = asset.get("RTREC").getAsInt();
-        this.RTpeople = asset.get("RTpeople").getAsString();
   }
     public String getDocType() {
         return docType;
@@ -77,22 +69,6 @@ public class AssetDto {
         this.KRW = KRW;
     }
 
-    public int getRTKRW() {
-        return RTKRW;
-    }
-
-    public void setRTKRW(int RTKRW) {
-        this.RTKRW = RTKRW;
-    }
-
-    public String getRTpeople() {
-        return RTpeople;
-    }
-
-    public void setRTpeople(String RTpeople) {
-        this.RTpeople = RTpeople;
-    }
-
     public String getRole() {
         return Role;
     }
@@ -101,11 +77,4 @@ public class AssetDto {
         Role = role;
     }
 
-    public int getRTREC() {
-        return RTREC;
-    }
-
-    public void setRTREC(int RTREC) {
-        this.RTREC = RTREC;
-    }
 }
