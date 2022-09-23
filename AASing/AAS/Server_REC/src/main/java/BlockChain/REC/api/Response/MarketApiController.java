@@ -89,6 +89,7 @@ public class MarketApiController {
         marketDto.setTime(LocalDateTime.now().toString());
         easilyConnect.UpdateAsset(marketDto);
 
+
         //MarketDto traded = new MarketDto()
 
 
