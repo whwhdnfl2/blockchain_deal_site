@@ -65,19 +65,19 @@ const Login = (props) => {
     })
     .then((data) => {
       setIsLoading(false);
-      props.onTax(data.tax);
+      props.onTax(data);
     });
   }
 
   const AdminAPI = () => {
     setIsLoading(true);
-    fetch(`/api/tax}`)
+    fetch(`/api/tax`)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
       setIsLoading(false);
-      props.onTax(data.tax);
+      props.onTax(data);
     });
   }
 
@@ -106,7 +106,6 @@ const Login = (props) => {
       props.onRole("taxAdmin");
     }
     else{
-      console.log(isLoading);
       BuyerOrSellerAPI();
       props.onID(emailState.value);
       props.onBuyerLogin();

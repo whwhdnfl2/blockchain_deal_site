@@ -346,7 +346,7 @@ const HomePage = () => {
           <Card>
             <p>{myID}</p>
             <p>role: {role}</p>
-            <p>현재 세율: {tax}</p>
+            <p>현재 세율: {tax}%</p>
             <Button onClick={LogoutHandler}>Logout</Button>
           </Card>
         )}
@@ -354,7 +354,7 @@ const HomePage = () => {
           <Card>
             <p>{myID}</p>
             <p>role: {role}</p>
-            <p>현재 세율: {tax}</p>
+            <p>현재 세율: {tax}%</p>
             <Button onClick={LogoutHandler}>Logout</Button>
           </Card>
         )}        

@@ -35,6 +35,7 @@ const BuyPage = (props) => {
     }
     else{
       putBuyData();
+      props.onShow();
       props.handleClose();
     }
   }
@@ -66,7 +67,6 @@ const BuyPage = (props) => {
       const data = await response.json();
       console.log(JSON.stringify(data));
       console.log("postsell");
-      props.onShow();
     }catch(error){
       console.log(error.message);
     }
