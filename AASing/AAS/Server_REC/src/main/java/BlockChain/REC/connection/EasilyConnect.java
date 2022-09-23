@@ -11,6 +11,7 @@ import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import lombok.Data;
 import org.hyperledger.fabric.client.*;
 import org.hyperledger.fabric.client.identity.*;
+import org.yaml.snakeyaml.error.Mark;
 
 import java.io.IOException;
 import java.lang.reflect.Member;
@@ -101,6 +102,18 @@ public class EasilyConnect {
                 assetDto.getRole()
         );
     }
+    public void createAsset(MarketDto marketDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
+        contract.submitTransaction("CreateAsset",
+                marketDto.getDocType(),
+                marketDto.getID(),
+                marketDto.getSeller(),
+                marketDto.getBuyer(),
+                Integer.toString(marketDto.getREC()),
+                Integer.toString(marketDto.getKRW()),
+                marketDto.getState(),
+                marketDto.getTime()
+        );
+    }
 
 //    public void UpdateAsset(AssetDto assetDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
 //        contract.submitTransaction("UpdateAsset",
@@ -116,6 +129,17 @@ public class EasilyConnect {
                 Integer.toString(marketDto.getKRW()),
                 marketDto.getState(),
                 marketDto.getTime()
+                );
+    }
+    public void UpdateAsset(AssetDto assetDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
+        contract.submitTransaction("UpdateAsset",
+                assetDto.getID(),
+                assetDto.getREC(),
+                assetDto.getBuyer(),
+                Integer.toString(assetDto.getREC()),
+                Integer.toString(assetDto.getKRW()),
+                assetDto.getState(),
+                assetDto.getTime()
                 );
     }
 

@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.yaml.snakeyaml.error.Mark;
 
 import javax.validation.Valid;
+import javax.xml.bind.DatatypeConverter;
 import java.lang.reflect.Member;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,28 +75,60 @@ public class MarketApiController {
         }
         return marketDtoList;
     }
+    @PostMapping("/api/Market/getDeal")
+    public List<MarketDto> getAllDeal(@RequestBody @Valid String ID) throws Exception{
+        System.out.println(ID);
+        Account account = accountRepository.findByUsername("koreapower_admin");
+        MemberDto memberDto = new MemberDto(account);
+        EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+        JsonArray Assets = easilyConnect.getMarket().getAsJsonArray();
+        List<MarketDto> marketDtoList = new ArrayList<>();
+        for(int i=0;i<Assets.size();++i){
+            JsonObject asset = Assets.get(i).getAsJsonObject();
+            MarketDto marketDto = new MarketDto(asset);
+            if(marketDto.getState().equals("DONE") ){
+                marketDtoList.add(marketDto);
+            }
+        }
+        return marketDtoList;
+    }
 
 
     @PostMapping("/api/Market/trade")
-    public String trading(@RequestBody @Valid TradeDto tradeDto) throws Exception{
+    public MarketDto trading(@RequestBody @Valid TradeDto tradeDto) throws Exception{
         System.out.println(tradeDto.toString());
-        Account buyerAccount = accountRepository.findByUsername(tradeDto.getBuyer());
-        MemberDto market = new MemberDto(buyerAccount);
-        EasilyConnect easilyConnect =  new EasilyConnect(market);
-        MarketDto marketDto = new MarketDto(easilyConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
+        Account marketaccount = accountRepository.findByUsername("koreapower_admin");
+        MemberDto market = new MemberDto(marketaccount);
+        EasilyConnect MarketConnect =  new EasilyConnect(market);
+        //시장
+        MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
         System.out.println(marketDto.toString());
+
         marketDto.setBuyer(tradeDto.getBuyer());
         marketDto.setREC(marketDto.getREC() - tradeDto.getRec());
         marketDto.setKRW(marketDto.getKRW() - tradeDto.getKrw());
-        marketDto.setState("DONE");
         marketDto.setTime(LocalDateTime.now().toString());
-        easilyConnect.UpdateAsset(marketDto);
+        MarketConnect.UpdateAsset(marketDto);
+
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        String password = marketDto.toString();
+        byte[] digest = md.digest(password.getBytes(StandardCharsets.UTF_8));
+        String sha256 = DatatypeConverter.printHexBinary(digest).toLowerCase();
+        MarketDto newDeal = new MarketDto("asset",sha256,marketDto.getSeller(), marketDto.getBuyer(),tradeDto.getRec(),tradeDto.getKrw(),"DONE", marketDto.getTime());
+        MarketConnect.createAsset(newDeal);
+
+        //구매자 돈뺴기
+        Account Buyeraccount = accountRepository.findByUsername(tradeDto.getBuyer());
+        MemberDto buyer = new MemberDto(Buyeraccount);
+        EasilyConnect BuyerConnect = new EasilyConnect(buyer);
+        AssetDto assetDto = new AssetDto(BuyerConnect.getAssetByID(tradeDto.getBuyer()).getAsJsonObject());
+        assetDto.setKRW(assetDto.getKRW() - tradeDto.getKrw());
+        assetDto.setREC(assetDto.getREC() + tradeDto.getRec());
+        BuyerConnect.UpdateAsset(assetDto);
 
 
-        //MarketDto traded = new MarketDto()
-
-
-        return "oh";
+        //판매자 돈넣기
+        return marketDto;
     }
     /*
     {
