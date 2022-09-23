@@ -96,4 +96,18 @@ public class MarketDto {
         this.state = asset.get("State").getAsString();
         this.time = asset.get("Time").getAsString();
     }
+
+    @Override
+    public String toString() {
+        return "MarketDto{" +
+                "DocType='" + DocType + '\'' +
+                ", ID='" + ID + '\'' +
+                ", Seller='" + Seller + '\'' +
+                ", Buyer='" + Buyer + '\'' +
+                ", REC=" + REC +
+                ", KRW=" + KRW +
+                ", state='" + state + '\'' +
+                ", time='" + time + '\'' +
+                '}';
+    }
 }

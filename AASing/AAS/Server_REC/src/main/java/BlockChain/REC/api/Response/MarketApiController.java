@@ -128,6 +128,7 @@ public class MarketApiController {
 
         marketDto.setREC(marketDto.getREC() - tradeDto.getRec());
         marketDto.setTime(LocalDateTime.now().toString());
+        marketDto.setBuyer(tradeDto.getBuyer());
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         String password = marketDto.toString();
@@ -152,8 +153,11 @@ public class MarketApiController {
         AssetDto sellDto = new AssetDto(SellerConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
         sellDto.setKRW(sellDto.getKRW() + tradeDto.getKrw());
 
-        if(BuyerDto.getKRW() < 0 || marketDto.getREC() < 0) return "Fail!";
-
+//        if(BuyerDto.getKRW() < 0 || marketDto.getREC() < 0) return "Fail!";
+        System.out.println("수정할 마켓 : " + marketDto.toString());
+        System.out.println("수정된 바이어 정보 : " + BuyerDto.toString());
+        System.out.println("수정된 셀러 정보 : " + sellDto.toString());
+        System.out.println("새로운 거래 정보 : " + newDeal.toString());
         MarketConnect.UpdateAsset(marketDto);
         BuyerConnect.UpdateAsset(BuyerDto);
         SellerConnect.UpdateAsset(sellDto);

@@ -34,7 +34,7 @@ public class TaxApiController {
 
     @PostMapping("/api/updateTax")
     public String setTax(@RequestBody @Valid TaxDto taxDto) throws Exception{
-        if(taxDto.getId() != "tax_admin") return "Fail";
+        if(!taxDto.getId().equals("tax_admin") ) return "Fail";
         Account account = accountRepository.findByUsername("tax_admin");
         MemberDto memberDto = new MemberDto(account);
         EasilyConnect easilyConnect = new EasilyConnect(memberDto);
