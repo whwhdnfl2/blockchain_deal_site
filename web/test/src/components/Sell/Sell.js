@@ -18,26 +18,35 @@ const Sell = (props) => {
   };
   const handleClose = () => setOpen(false);
 
-  const showData = () => {
+  async function showData() {
     props.onIsLoading(true);
-    fetch(`/api/Market`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        const transformedData = data.map((marketData) => {
-          return {
-            KRW: marketData.krw,
-            REC: marketData.rec,
-            allKRW: marketData.krw * marketData.rec,
-            id: marketData.id,
-          };
-        });
-        props.onSellRow(transformedData)
-        props.onIsLoading(false);
-        console.log("onshowSell")
+    try{
+      const response = await fetch(`/api/Market`);
+      if(!response.ok){
+        throw new Error('데이터 받아오기 실패')
+      }
+
+      const data = await response.json();
+
+
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          seller: marketData.seller,
+          id: marketData.id,
+          allKRW: marketData.krw * marketData.rec,
+        };
       });
-  };
+      props.onSellRow(transformedData);
+      props.onIsLoading(false);
+      console.log("sellonshow");
+    }catch (error){
+      props.onError(error.message);
+      console.log(error.message);
+    }
+  }
+  
 
   return (
     <React.Fragment>
@@ -63,7 +72,7 @@ const Sell = (props) => {
                 <TableCell align="right">{row.KRW}</TableCell>
                 <TableCell align="right">{row.REC}</TableCell>
                 <TableCell align="right">{row.allKRW}</TableCell>
-                <TableCell align="right">{row.id}</TableCell>
+                <TableCell align="right">{row.seller}</TableCell>
               </TableRow>
             ))}
           </TableBody>

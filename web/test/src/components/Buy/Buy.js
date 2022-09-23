@@ -15,10 +15,10 @@ import BuyPage from "./BuyPage";
 const Buy = (props) => {
   const [open, setOpen] = useState(false);
 
-  const handleOpen = (t_rec, t_num, t_name) => {
+  const handleOpen = (t_rec, t_num, t_id) => {
     setNowRec(t_rec);
     setNowAsset(t_num);
-    setNowID(t_name);
+    setNowID(t_id);
     setOpen(true);
   };
 
@@ -29,26 +29,35 @@ const Buy = (props) => {
   const [nowID, setNowID] = useState("");
 
 
-  const showData = () => {
+  async function showData() {
     props.onIsLoading(true);
-    fetch(`/api/`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        const transformedData = data.map((marketData) => {
-          return {
-            KRW: marketData.krw,
-            REC: marketData.rec,
-            allKRW: marketData.krw * marketData.rec,
-            id: marketData.id,
-          };
-        });
-        props.onSellRow(transformedData);
-        props.onIsLoading(false);
-        console.log("buyonshow");
+    try{
+      const response = await fetch(`/api/Market`);
+      if(!response.ok){
+        throw new Error('데이터 받아오기 실패')
+      }
+
+      const data = await response.json();
+
+
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          seller: marketData.seller,
+          id: marketData.id,
+          allKRW: marketData.krw * marketData.rec,
+        };
       });
-  };
+      props.onSellRow(transformedData);
+      props.onIsLoading(false);
+      console.log("buyonshow");
+    }catch (error){
+      props.onError(error.message);
+      console.log(error.message);
+    }
+  }
+  
 
 
   return (
@@ -73,9 +82,9 @@ const Buy = (props) => {
                 <TableCell align="right">{row.KRW}</TableCell>
                 <TableCell align="right">{row.REC}</TableCell>
                 <TableCell align="right">{row.allKRW}</TableCell>
-                <TableCell align="right">{row.id}</TableCell>
+                <TableCell align="right">{row.seller}</TableCell>
                 <TableCell align="right">
-                  {console.log((props.tax * 0.01) + 1)}
+                  {console.log(row.id)}
                   {props.myAsset >= row.KRW && (
                     <Button onClick={() => handleOpen(row.KRW, row.REC, row.id)}>구매</Button>
                   )}
@@ -87,7 +96,7 @@ const Buy = (props) => {
         </Table>
       </TableContainer>}
       {props.isLoading && <h2>Loading...</h2>}
-      <BuyPage open={open} onShow={showData} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum} buyID={nowID}></BuyPage>
+      <BuyPage itemID={nowID} open={open} onShow={showData} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
     </React.Fragment>
   );
 };

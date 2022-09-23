@@ -59,7 +59,7 @@ const Login = (props) => {
       props.onAsset(data.krw);
     });
     setIsLoading(true);
-    fetch(`/api/tax/`)
+    fetch(`/api/tax`)
     .then((response) => {
       return response.json();
     })
@@ -71,7 +71,7 @@ const Login = (props) => {
 
   const AdminAPI = () => {
     setIsLoading(true);
-    fetch(`/api/tax/}`)
+    fetch(`/api/tax}`)
     .then((response) => {
       return response.json();
     })
@@ -83,7 +83,7 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if(!(emailState.value === "Seller_User1" || emailState.value === "Seller_User2" || emailState.value === "Buyer_User1" || emailState.value === "Buyer_User2" || emailState.value === "admin" || emailState.value === "admin_tax")){
+    if(!(emailState.value === "Seller_User1" || emailState.value === "Seller_User2" || emailState.value === "Buyer_User1" || emailState.value === "Buyer_User2" || emailState.value === "koreapower_admin" || emailState.value === "tax_admin")){
       props.onValid(true);
       return;
     }
@@ -93,13 +93,13 @@ const Login = (props) => {
       props.onSellerLogin();
       props.onRole("seller");
     }
-    else if(emailState.value === "admin"){
+    else if(emailState.value === "koreapower_admin"){
       AdminAPI();
       props.onID(emailState.value);
       props.onAdminLogin();
       props.onRole("admin");
     }
-    else if (emailState.value === "admin_tax"){
+    else if (emailState.value === "tax_admin"){
       AdminAPI();
       props.onID(emailState.value);
       props.onTaxAdminLogin();

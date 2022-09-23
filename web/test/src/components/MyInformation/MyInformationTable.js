@@ -13,6 +13,7 @@ const MyInformationTable = (props) => {
 
   return (
     <React.Fragment>
+      {props.informationRow.length !== 0 && <h2>거래내역</h2>}
         { props.informationRow.length !== 0 &&<TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -40,7 +41,7 @@ const MyInformationTable = (props) => {
           </TableBody>
         </Table>
       </TableContainer> }
-      {props.informationRow.length === 0 && <h2>No data!!</h2>}
+      {props.informationRow.length === 0 && <h1>거래내역이 없습니다.</h1>}
     </React.Fragment>
   );
 };

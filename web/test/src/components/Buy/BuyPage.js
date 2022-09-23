@@ -40,15 +40,22 @@ const BuyPage = (props) => {
   }
 
   async function putBuyData() {
-    const SellData = {
-      buyerID: props.myID, //구매자 id
-      sellerID: props.buyID,// 판매자 id
-      rec: insertRec, //입력한 rec 갯수
-      asset: props.buyRec, //rec 개당 가격
-    }
-    const response = await fetch(`/api/`, {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const SellData = JSON.stringify({
+      "id": props.itemID,
+      "buyer": props.myID,
+      "krw": Number(insertRec),
+      "rec": props.buyRec
+    });
+    
+    console.log(SellData)
+    const response = await fetch(`/api/Market/trade`, {
       method: 'POST',
-      body: JSON.stringify(SellData)
+      headers: myHeaders,
+      body: SellData,
+      redirect: 'follow'
     });
 
     props.onMyRec(Number(props.myRec) + Number(insertRec));
