@@ -9,7 +9,7 @@ public class RecApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(RecApplication.class, args);
-		System.out.println("Working Directory = " + System.getProperty("user.dir"));
+//		System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
 
 	}
