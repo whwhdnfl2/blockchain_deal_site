@@ -48,18 +48,18 @@ public class MemberDto {
     this.peerEndpoint = account.getPeer_end_point();
     this.overrideAuth = String.format("peer0.%s.example.com", this.original_id);
 
-    System.out.println("ID : " + this.ID);
-    System.out.println("User : "+this.User);
-    System.out.println("original_id : " + original_id);
-    System.out.println("mspID : " + mspID);
-    System.out.println("cryptoPath : " + cryptoPath + "권한 : " + this.cryptoPath.toFile().canRead());
-    System.out.println("certPath : " + certPath + "권한 : " + this.certPath.toFile().canRead());
-    System.out.println("keyDirPath : " + keyDirPath );
-    System.out.println("tlsCertPath : " + tlsCertPath  + "권한 : " + this.tlsCertPath.toFile().canRead());
-    System.out.println("channelName : " + channelName);
-    System.out.println("chaincodeName : " + chaincodeName);
-    System.out.println("peerEndpoint : " + peerEndpoint);
-    System.out.println("overrideAuth : " + overrideAuth);
+//    System.out.println("ID : " + this.ID);
+//    System.out.println("User : "+this.User);
+//    System.out.println("original_id : " + original_id);
+//    System.out.println("mspID : " + mspID);
+//    System.out.println("cryptoPath : " + cryptoPath + "권한 : " + this.cryptoPath.toFile().canRead());
+//    System.out.println("certPath : " + certPath + "권한 : " + this.certPath.toFile().canRead());
+//    System.out.println("keyDirPath : " + keyDirPath );
+//    System.out.println("tlsCertPath : " + tlsCertPath  + "권한 : " + this.tlsCertPath.toFile().canRead());
+//    System.out.println("channelName : " + channelName);
+//    System.out.println("chaincodeName : " + chaincodeName);
+//    System.out.println("peerEndpoint : " + peerEndpoint);
+//    System.out.println("overrideAuth : " + overrideAuth);
   }
 
   @Override
