@@ -12,5 +12,6 @@ organizations/peerOrganizations/*
 system-genesis-block/*
 *.tar.gz
 log.txt
+
 test.sh
 first_init.sh
