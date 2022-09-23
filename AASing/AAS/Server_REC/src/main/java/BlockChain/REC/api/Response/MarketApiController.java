@@ -75,6 +75,8 @@ public class MarketApiController {
         }
         return marketDtoList;
     }
+
+    //마켓의 거래완료목록 가져오는 함수
     @PostMapping("/api/Market/getDeal")
     public List<MarketDto> getAllDeal(@RequestBody @Valid String ID) throws Exception{
         System.out.println(ID);
@@ -93,7 +95,28 @@ public class MarketApiController {
         return marketDtoList;
     }
 
-
+    //마켓 어셋 수정 함수
+    @PostMapping("/api/Market/dealupdate")
+    public MarketDto dealupdate(@RequestBody @Valid AssetDto assetDto) throws Exception{
+        Account marketaccount = accountRepository.findByUsername("koreapower_admin");
+        MemberDto market = new MemberDto(marketaccount);
+        EasilyConnect MarketConnect =  new EasilyConnect(market);
+        MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
+        marketDto.setREC(assetDto.getREC());
+        marketDto.setKRW(assetDto.getKRW());
+        marketDto.setTime(LocalDateTime.now().toString());
+        MarketConnect.UpdateAsset(marketDto);
+        return marketDto;
+    }
+    /*
+    거래 함수
+    {
+    "id" : "asd",
+    "buyer" : "sell",
+    "krw" : 5,
+    "rec" : 10
+    }
+     */
     @PostMapping("/api/Market/trade")
     public MarketDto trading(@RequestBody @Valid TradeDto tradeDto) throws Exception{
         System.out.println(tradeDto.toString());
@@ -104,9 +127,7 @@ public class MarketApiController {
         MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
         System.out.println(marketDto.toString());
 
-        marketDto.setBuyer(tradeDto.getBuyer());
         marketDto.setREC(marketDto.getREC() - tradeDto.getRec());
-        marketDto.setKRW(marketDto.getKRW() - tradeDto.getKrw());
         marketDto.setTime(LocalDateTime.now().toString());
         MarketConnect.UpdateAsset(marketDto);
 
@@ -115,27 +136,27 @@ public class MarketApiController {
         byte[] digest = md.digest(password.getBytes(StandardCharsets.UTF_8));
         String sha256 = DatatypeConverter.printHexBinary(digest).toLowerCase();
         MarketDto newDeal = new MarketDto("asset",sha256,marketDto.getSeller(), marketDto.getBuyer(),tradeDto.getRec(),tradeDto.getKrw(),"DONE", marketDto.getTime());
+        System.out.println(newDeal.toString());
         MarketConnect.createAsset(newDeal);
 
         //구매자 돈뺴기
         Account Buyeraccount = accountRepository.findByUsername(tradeDto.getBuyer());
         MemberDto buyer = new MemberDto(Buyeraccount);
         EasilyConnect BuyerConnect = new EasilyConnect(buyer);
-        AssetDto assetDto = new AssetDto(BuyerConnect.getAssetByID(tradeDto.getBuyer()).getAsJsonObject());
-        assetDto.setKRW(assetDto.getKRW() - tradeDto.getKrw());
-        assetDto.setREC(assetDto.getREC() + tradeDto.getRec());
-        BuyerConnect.UpdateAsset(assetDto);
+        AssetDto BuyerDto = new AssetDto(BuyerConnect.getAssetByID(tradeDto.getBuyer()).getAsJsonObject());
+        BuyerDto.setKRW(BuyerDto.getKRW() - tradeDto.getKrw());
+        BuyerDto.setREC(BuyerDto.getREC() + tradeDto.getRec());
+        BuyerConnect.UpdateAsset(BuyerDto);
 
 
         //판매자 돈넣기
+        Account Selleraccount = accountRepository.findByUsername(tradeDto.getId());
+        MemberDto seller = new MemberDto(Selleraccount);
+        EasilyConnect SellerConnect = new EasilyConnect(seller);
+        AssetDto sellDto = new AssetDto(SellerConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
+        sellDto.setKRW(sellDto.getKRW() + tradeDto.getKrw());
+        SellerConnect.UpdateAsset(sellDto);
         return marketDto;
     }
-    /*
-    {
-    "id" : "asd",
-    "buyer" : "sell",
-    "krw" : 5,
-    "rec" : 10
-    }
-     */
+
 }
