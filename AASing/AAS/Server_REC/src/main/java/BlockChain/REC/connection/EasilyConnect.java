@@ -138,7 +138,6 @@ public class EasilyConnect {
     }
     public void UpdateAsset(TaxDto taxDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
         contract.submitTransaction("UpdateAsset",
-                "asset",
                 "TAX",
                 "REVENUE",
                 Integer.toString(taxDto.getTax())
