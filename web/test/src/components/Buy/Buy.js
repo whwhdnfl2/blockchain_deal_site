@@ -38,10 +38,10 @@ const Buy = (props) => {
       .then((data) => {
         const transformedData = data.map((marketData) => {
           return {
-            KRW: marketData.KRW,
-            REC: marketData.REC,
-            allKRW: marketData.KRW * marketData.REC,
-            id: marketData.seller,
+            KRW: marketData.krw,
+            REC: marketData.rec,
+            allKRW: marketData.krw * marketData.rec,
+            id: marketData.id,
           };
         });
         props.onSellRow(transformedData);
@@ -75,7 +75,8 @@ const Buy = (props) => {
                 <TableCell align="right">{row.allKRW}</TableCell>
                 <TableCell align="right">{row.id}</TableCell>
                 <TableCell align="right">
-                  {props.asset >= row.allKRW && (
+                  {console.log((props.tax * 0.01) + 1)}
+                  {props.myAsset >= row.KRW && (
                     <Button onClick={() => handleOpen(row.KRW, row.REC, row.id)}>구매</Button>
                   )}
                   {props.asset < row.allKRW && <Button disabled>구매</Button>}

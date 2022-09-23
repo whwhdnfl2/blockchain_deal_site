@@ -58,11 +58,20 @@ const Login = (props) => {
       props.onRec(data.rec);
       props.onAsset(data.krw);
     });
+    setIsLoading(true);
+    fetch(`/api/tax/`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      setIsLoading(false);
+      props.onTax(data.tax);
+    });
   }
 
   const AdminAPI = () => {
     setIsLoading(true);
-    fetch(`/api/`)
+    fetch(`/api/tax/}`)
     .then((response) => {
       return response.json();
     })

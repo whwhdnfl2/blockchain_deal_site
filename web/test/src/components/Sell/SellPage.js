@@ -5,6 +5,7 @@ import Modal from "@mui/material/Modal";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import ErrorSellPage from "./ErrorSellPage";
+import {TextField} from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -33,7 +34,7 @@ const SellPage = (props) => {
   }
   const submitHandler = (event) => {
     event.preventDefault();
-    if(props.asset < insertRec*insertPrice){
+    if(props.myRec < insertRec || insertRec <= 0){
         setIsValid(true);
         return;
     }
@@ -70,16 +71,10 @@ const SellPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <p>보유 rec: {props.myRec}</p>
             <form onSubmit={submitHandler}>
-              <div>
-                <label htmlFor="rec">판매할 rec 갯수</label>
-                <input type="number" id="rec" value={insertRec} onChange={recChangeHandler}></input>
-              </div>
-              <div>
-                <label htmlFor="price">rec 개당 가격</label>
-                <input type="number" id="price" value={insertPrice} onChange={priceChangeHandler}></input>
-              </div>
+              <h2>판매를 원하는 rec 갯수와 개당 가격을 입력해주세요. (자연수)</h2>
+              <TextField margin="dense" label="rec 갯수" onChange={recChangeHandler} inputProps={{type:"number"}} />
+              <TextField margin="dense" label="개당 가격" onChange={priceChangeHandler} inputProps={{type:"number"}} />
               <p>총 가격: {insertPrice * insertRec}</p>
               <Button type="submit" variant="contained">
                 submit

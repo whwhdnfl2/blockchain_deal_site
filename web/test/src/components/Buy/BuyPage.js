@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import ErrorBuyPage from "./ErrorBuyPage";
 import Card from "../../UI/Card/Card"
@@ -29,7 +29,7 @@ const BuyPage = (props) => {
 
   const submitHandler = (event) =>{
     event.preventDefault();
-    if(props.myAsset < props.buyRec*insertRec){
+    if(0 >= props.buyRec*insertRec || props.myAsset < props.buyRec*insertRec){
         setIsValid(true);
         return;
     }
@@ -69,6 +69,7 @@ const BuyPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
+          <h2>구매를 원하는 rec 갯수를 입력해주세요. (자연수)</h2>
             <Card>
               <p>rec 개당 가격: {props.buyRec}</p>
               <p>rec 갯수: {props.buyNum}</p>
@@ -76,11 +77,8 @@ const BuyPage = (props) => {
             </Card>
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <form onSubmit={submitHandler}>
-              <div>
-                <label htmlFor="rec">구매할 rec 갯수: </label>
-                <input type="number" id="rec" onChange={recChangeHandler}></input>
-              </div>
+            <form onSubmit={submitHandler}>              
+              <TextField margin="dense" label="rec 갯수" onChange={recChangeHandler} inputProps={{type:"number"}} />
               <p>총 가격: {props.buyRec * insertRec}</p>
               <Button type="submit" variant="contained">
                 submit

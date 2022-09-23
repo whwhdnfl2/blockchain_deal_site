@@ -20,17 +20,17 @@ const Sell = (props) => {
 
   const showData = () => {
     props.onIsLoading(true);
-    fetch(`/api/`)
+    fetch(`/api/Market`)
       .then((response) => {
         return response.json();
       })
       .then((data) => {
         const transformedData = data.map((marketData) => {
           return {
-            KRW: marketData.KRW,
-            REC: marketData.REC,
-            allKRW: marketData.KRW * marketData.REC,
-            id: marketData.seller,
+            KRW: marketData.krw,
+            REC: marketData.rec,
+            allKRW: marketData.krw * marketData.rec,
+            id: marketData.id,
           };
         });
         props.onSellRow(transformedData)

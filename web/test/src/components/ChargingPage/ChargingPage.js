@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Button } from "@mui/material";
 import { useState } from "react";
-import ErrorTaxPage from "./ErrorTaxPage";
 import {TextField} from "@mui/material";
+import ErrorChargingPage from "./ErrorChargingPage";
 
 const style = {
   position: "absolute",
@@ -19,36 +19,46 @@ const style = {
   p: 4,
 };
 
-const Tax = (props) => {
-  const [taxIsValid, setTaxIsValid] = useState(false);
-  const [insertTax, setInsertTax] = useState(0);
+const ChargingPage = (props) => {
+  const [insertREC, setInsertTax] = useState(0);
+  const [insertKRW, setInsertKRW] = useState(0);
+
+  const [chargingIsValid, setChargingIsValid] = useState(false);
 
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if(insertTax < 0 || insertTax > 100){
-      setTaxIsValid(true);
+    if(Number(props.rec) + Number(insertREC) < 0 || Number(props.asset) + Number(insertKRW) < 0){
+      setChargingIsValid(true);
       return;
     }
-    props.onTax(insertTax);
-    postTaxData();
-    props.handleTaxClose();
+    postChargingData();
+    props.onRec(Number(props.rec) + Number(insertREC));
+    props.onAsset(Number(props.asset) + Number(insertKRW));
+    props.onChargingClose();
   };
 
-  const taxChangeHandler = (event) => {
+  const REChangeHandler = (event) => {
     setInsertTax(event.target.value);
   }
 
-  async function postTaxData(){
+  const KRWchangeHandler = (event) => {
+    setInsertKRW(event.target.value);
+
+  }
+
+  async function postChargingData(){
     const SellData = {
       id: props.myID,
-      tax: insertTax,
+      rec: insertREC,
+      krw: insertKRW,
     }
     const response = await fetch(`/api/`, {
       method: 'POST',
       body: JSON.stringify(SellData)
     });
-    props.onTax(insertTax)
+    props.onREC(props.rec + insertREC);
+    props.onAsset(props.asset + insertKRW);
     const data = await response.json();
     console.log(JSON.stringify(data));
     console.log("postsell");
@@ -58,17 +68,17 @@ const Tax = (props) => {
     <div>
       <Modal
         open={props.open}
-        onClose={props.onTaxClose}
+        onClose={props.onChargingClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <form onSubmit={submitHandler}>
-              <div>
-                <h2>원하는 tax를 입력 해주세요. (값은 0-100 사이의 자연수 입니다.)</h2>
-                <TextField margin="normal" label="tax(%)" onChange={taxChangeHandler} inputProps={{type:"number"}} />
-              </div>
+              <h2>충전하거나 빼가고싶은 rec와 자산의 양을 입력하세요. (정수)</h2>
+              <TextField margin="dense" label="REC" onChange={REChangeHandler} inputProps={{type:"number"}} />
+              <TextField margin="dense" label="KRW" onChange={KRWchangeHandler} inputProps={{type:"number"}} />
+              <div/>
               <Button type="submit" variant="contained">
                 submit
               </Button>
@@ -76,9 +86,9 @@ const Tax = (props) => {
           </Typography>
         </Box>  
       </Modal>
-      {taxIsValid && <ErrorTaxPage open={taxIsValid} onValid={setTaxIsValid}></ErrorTaxPage>}
+      {chargingIsValid && <ErrorChargingPage open={chargingIsValid} onValid={setChargingIsValid}></ErrorChargingPage>}
     </div>
   );
 };
 
-export default Tax;
+export default ChargingPage;
