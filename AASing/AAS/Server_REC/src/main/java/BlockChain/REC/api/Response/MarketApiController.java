@@ -118,18 +118,16 @@ public class MarketApiController {
     }
      */
     @PostMapping("/api/Market/trade")
-    public MarketDto trading(@RequestBody @Valid TradeDto tradeDto) throws Exception{
+    public String trading(@RequestBody @Valid TradeDto tradeDto) throws Exception{
         System.out.println(tradeDto.toString());
         Account marketaccount = accountRepository.findByUsername("koreapower_admin");
         MemberDto market = new MemberDto(marketaccount);
         EasilyConnect MarketConnect =  new EasilyConnect(market);
         //시장
         MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
-        System.out.println(marketDto.toString());
 
         marketDto.setREC(marketDto.getREC() - tradeDto.getRec());
         marketDto.setTime(LocalDateTime.now().toString());
-        MarketConnect.UpdateAsset(marketDto);
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         String password = marketDto.toString();
@@ -137,7 +135,6 @@ public class MarketApiController {
         String sha256 = DatatypeConverter.printHexBinary(digest).toLowerCase();
         MarketDto newDeal = new MarketDto("asset",sha256,marketDto.getSeller(), marketDto.getBuyer(),tradeDto.getRec(),tradeDto.getKrw(),"DONE", marketDto.getTime());
         System.out.println(newDeal.toString());
-        MarketConnect.createAsset(newDeal);
 
         //구매자 돈뺴기
         Account Buyeraccount = accountRepository.findByUsername(tradeDto.getBuyer());
@@ -146,7 +143,6 @@ public class MarketApiController {
         AssetDto BuyerDto = new AssetDto(BuyerConnect.getAssetByID(tradeDto.getBuyer()).getAsJsonObject());
         BuyerDto.setKRW(BuyerDto.getKRW() - tradeDto.getKrw());
         BuyerDto.setREC(BuyerDto.getREC() + tradeDto.getRec());
-        BuyerConnect.UpdateAsset(BuyerDto);
 
 
         //판매자 돈넣기
@@ -155,8 +151,14 @@ public class MarketApiController {
         EasilyConnect SellerConnect = new EasilyConnect(seller);
         AssetDto sellDto = new AssetDto(SellerConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
         sellDto.setKRW(sellDto.getKRW() + tradeDto.getKrw());
+
+        if(BuyerDto.getKRW() < 0 || marketDto.getREC() < 0) return "Fail!";
+
+        MarketConnect.UpdateAsset(marketDto);
+        BuyerConnect.UpdateAsset(BuyerDto);
         SellerConnect.UpdateAsset(sellDto);
-        return marketDto;
+        MarketConnect.createAsset(newDeal);
+        return "success";
     }
 
 }
