@@ -3,6 +3,7 @@ package BlockChain.REC.connection;
 import BlockChain.REC.dto.AssetDto;
 import BlockChain.REC.dto.MarketDto;
 import BlockChain.REC.dto.MemberDto;
+import BlockChain.REC.dto.TaxDto;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.grpc.ManagedChannel;
@@ -77,6 +78,12 @@ public class EasilyConnect {
         return prettyJson(result);
     }
 
+    public JsonElement getTax() throws GatewayException{
+        var result = contract.evaluateTransaction("ReadAsset","TAX");
+        System.out.println(prettyJson(result));
+        return prettyJson(result);
+    }
+
     public JsonElement getAssetByID(String id) throws GatewayException{
         System.out.println(this.memberDto.toString());
         var result = contract.evaluateTransaction("ReadAsset",id);
@@ -128,6 +135,14 @@ public class EasilyConnect {
                 Integer.toString(assetDto.getREC()),
                 Integer.toString(assetDto.getKRW()),
                 assetDto.getRole());
+    }
+    public void UpdateAsset(TaxDto taxDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
+        contract.submitTransaction("UpdateAsset",
+                "asset",
+                "TAX",
+                "REVENUE",
+                Integer.toString(taxDto.getTax())
+        );
     }
 
 
