@@ -111,16 +111,16 @@ public class EasilyConnect {
         );
     }
 
-       public void UpdateAsset(MarketDto marketDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
-        contract.submitTransaction("UpdateAsset",
-                marketDto.getID(),
-                marketDto.getSeller(),
-                marketDto.getBuyer(),
-                Integer.toString(marketDto.getREC()),
-                Integer.toString(marketDto.getKRW()),
-                marketDto.getState(),
-                marketDto.getTime()
-                );
+   public void UpdateAsset(MarketDto marketDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
+    contract.submitTransaction("UpdateAsset",
+            marketDto.getID(),
+            marketDto.getSeller(),
+            marketDto.getBuyer(),
+            Integer.toString(marketDto.getREC()),
+            Integer.toString(marketDto.getKRW()),
+            marketDto.getState(),
+            marketDto.getTime()
+            );
     }
     public void UpdateAsset(AssetDto assetDto) throws EndorseException, SubmitException, CommitStatusException, CommitException{
         contract.submitTransaction("UpdateAsset",
@@ -129,7 +129,6 @@ public class EasilyConnect {
                 Integer.toString(assetDto.getKRW()),
                 assetDto.getRole());
     }
-
 
 
     /*여기부터 market*/

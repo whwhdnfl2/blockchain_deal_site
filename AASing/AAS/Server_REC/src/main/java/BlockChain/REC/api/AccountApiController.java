@@ -19,6 +19,10 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.units.qual.A;
+import org.hyperledger.fabric.client.CommitException;
+import org.hyperledger.fabric.client.CommitStatusException;
+import org.hyperledger.fabric.client.EndorseException;
+import org.hyperledger.fabric.client.SubmitException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -86,6 +90,17 @@ public class AccountApiController {
         AssetDto assetDto = new AssetDto(Assets.getAsJsonObject());
         return assetDto;
     }
+
+    @PostMapping("/api/controlAsset")
+    public AssetDto updateAsset(@PathVariable @Valid AssetDto assetDto) throws Exception {
+        Account account = accountRepository.findByUsername(assetDto.getID());
+        MemberDto memberDto = new MemberDto(account);
+        EasilyConnect easilyConnect = new EasilyConnect(memberDto);
+        easilyConnect.UpdateAsset(assetDto);
+        return assetDto;
+    }
+
+
     @PostMapping ("/api/createAsset/{id}")
     public String createAssets(@PathVariable String id , @RequestBody @Valid AssetDto assetDto) throws Exception {
         Account account = accountRepository.findByUsername(id);
