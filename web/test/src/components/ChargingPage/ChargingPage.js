@@ -53,15 +53,24 @@ const ChargingPage = (props) => {
       rec: insertREC,
       krw: insertKRW,
     }
-    const response = await fetch(`/api/`, {
-      method: 'POST',
-      body: JSON.stringify(SellData)
-    });
-    props.onREC(props.rec + insertREC);
-    props.onAsset(props.asset + insertKRW);
-    const data = await response.json();
-    console.log(JSON.stringify(data));
-    console.log("postsell");
+    try{
+      const response = await fetch(`/api/`, {
+        method: 'POST',
+        body: JSON.stringify(SellData)
+      });
+
+      if(!response.ok){
+        throw new Error('Charging fail');
+      }
+
+      props.onREC(props.rec + insertREC);
+      props.onAsset(props.asset + insertKRW);
+      const data = await response.json();
+      console.log(JSON.stringify(data));
+      console.log("postsell");
+    }catch(error){
+      console.log(error.message);
+    }
   }
 
   return (

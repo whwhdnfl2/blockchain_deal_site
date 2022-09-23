@@ -31,7 +31,6 @@ import ChargingPage from "../ChargingPage/ChargingPage";
 const drawerWidth = 240;
 
 const HomePage = () => {
-  console.log("홈페이지");
   const [page, setPage] = useState(1);
   const [myID, setMyID] = useState("");
   const [isLoginBuyer, setIsLoginBuyer] = useState(false);
@@ -108,23 +107,30 @@ const HomePage = () => {
   };
 
   async function PageHanderTwo()  {
-    setError(null);
-    setPage(2);
-    const SellData = `${myID}`;
-    const response = await fetch(`/api/Market/myinfo`,{
-      method: 'POST',
-      body: SellData
-    });
-    const data = await response.json();
-    console.log(JSON.stringify(data));
-    setInformationRow(data);
+    try{
+      const SellData = `${myID}`;
+      const response = await fetch(`/api/Market/myinfo`,{
+        method: 'POST',
+        body: SellData
+      });
+      if(!response.ok){
+        throw new Error('거래 정보 받아오기 실패');
+      }
+      const data = await response.json();
+      console.log(JSON.stringify(data));
+      setError(null);
+      setPage(2);
+      setInformationRow(data);
+    }catch(error){
+
+    }
   };
 
   async function PageHanderThree () {
     setIsLoading(true);
     try{
       const response = await fetch(`/api/Market`);
-            if(!response.ok){
+      if(!response.ok){
         throw new Error('데이터 받아오기 실패')
       }
 
@@ -171,10 +177,11 @@ const HomePage = () => {
           id: marketData.id,
         };
       });
-    setPage(4);
-    setSellRows(transformedData);
-    setIsLoading(false);
-    console.log("homepagebuyshow");
+      setError(null);
+      setPage(4);
+      setSellRows(transformedData);
+      setIsLoading(false);
+      console.log("homepagesellshow");
     }catch (error){
       setError(error.message);
       console.log(error.message);

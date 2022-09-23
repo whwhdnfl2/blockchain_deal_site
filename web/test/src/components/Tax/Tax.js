@@ -44,14 +44,23 @@ const Tax = (props) => {
       id: props.myID,
       tax: insertTax,
     }
-    const response = await fetch(`/api/`, {
-      method: 'POST',
-      body: JSON.stringify(SellData)
-    });
-    props.onTax(insertTax)
-    const data = await response.json();
-    console.log(JSON.stringify(data));
-    console.log("postsell");
+    try{
+      const response = await fetch(`/api/`, {
+        method: 'POST',
+        body: JSON.stringify(SellData)
+      });
+
+      if(!response.ok){
+        throw new Error('taxupdate fail')
+      }
+
+      props.onTax(insertTax)
+      const data = await response.json();
+      console.log(JSON.stringify(data));
+      console.log("postsell");
+    }catch(error){
+      console.log(error.message);
+    }
   }
 
   return (
@@ -66,7 +75,7 @@ const Tax = (props) => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <form onSubmit={submitHandler}>
               <div>
-                <h2>원하는 tax를 입력 해주세요. (값은 0-100 사이의 자연수 입니다.)</h2>
+                <h2>원하는 tax를 입력 해주세요. (값은 0-100 사이의  입니다.)</h2>
                 <TextField margin="normal" label="tax(%)" onChange={taxChangeHandler} inputProps={{type:"number"}} />
               </div>
               <Button type="submit" variant="contained">

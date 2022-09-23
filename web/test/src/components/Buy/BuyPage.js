@@ -46,24 +46,30 @@ const BuyPage = (props) => {
     const SellData = JSON.stringify({
       "id": props.itemID,
       "buyer": props.myID,
-      "krw": Number(insertRec),
-      "rec": props.buyRec
+      "krw": props.buyRec,
+      "rec": Number(insertRec)
     });
-    
-    console.log(SellData)
-    const response = await fetch(`/api/Market/trade`, {
-      method: 'POST',
-      headers: myHeaders,
-      body: SellData,
-      redirect: 'follow'
-    });
+    try{
+      const response = await fetch(`/api/Market/trade`, {
+        method: 'POST',
+        headers: myHeaders,
+        body: SellData,
+        redirect: 'follow'
+      });
 
-    props.onMyRec(Number(props.myRec) + Number(insertRec));
-    props.onMyAsset(props.myAsset - props.buyRec*insertRec);
-    const data = await response.json();
-    console.log(JSON.stringify(data));
-    console.log("postsell");
-    props.onShow();
+      if(!response.ok){
+        throw new Error('Buying fail');
+      }
+  
+      props.onMyRec(Number(props.myRec) + Number(insertRec));
+      props.onMyAsset(props.myAsset - props.buyRec*insertRec);
+      const data = await response.json();
+      console.log(JSON.stringify(data));
+      console.log("postsell");
+      props.onShow();
+    }catch(error){
+      console.log(error.message);
+    }
   }
 
   return (
