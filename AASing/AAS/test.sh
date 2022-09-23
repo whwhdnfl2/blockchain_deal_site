@@ -26,6 +26,7 @@ setGlobals tax
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C revenue -n revenue -c '{"Args":["UpdateAsset","TAX","REVENUE","6"]}' 
 peer chaincode query -C revenue -n revenue -c '{"Args":["ReadAsset","TAX"]}' 
 
+
 setGlobals koreapower
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C market -n market -c '{"Args":["UpdateAsset","Seller_User1","Seller_User1"," ","10","8000","SALE","time"]}' 
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C market -n market -c '{"Args":["UpdateAsset","Seller_User2","Seller_User2"," ","5","10000","SALE","time"]}' 
