@@ -46,22 +46,52 @@ const SellPage = (props) => {
   };
 
   async function postSellData(){
-    const SellData = {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    const SellRECData = JSON.stringify({
       id: props.myID,
       rec: insertRec,
-    }
+    });
+
     try{
       const response = await fetch(`/api/Market/upREC`, {
         method: 'POST',
-        body: JSON.stringify(SellData)
+        headers: myHeaders,
+        body: SellRECData,
+        redirect: 'follow'
       });
       if(!response.ok){
-        throw new Error('market등록 실패')
+        throw new Error('market등록 실패1')
       }
       const data = await response.json();
+      if(data === 'fail'){
+        console.log("이미 시장에 있음");
+      }
       props.onMyRec(props.myRec - insertRec);
       console.log(JSON.stringify(data));
-      console.log("postsell");
+      console.log("postsell1");
+    }catch(error){
+      console.log(error.message);
+      return;
+    }
+    const SellKRWData = JSON.stringify({
+      id: props.myID,
+      krw: insertPrice,
+    });
+    try{
+      const response = await fetch(`/api/Market/upKRW`, {
+        method: 'POST',
+        headers: myHeaders,
+        body: SellKRWData,
+        redirect: 'follow'
+      });
+      if(!response.ok){
+        throw new Error('market등록 실패2')
+      }
+      const data = await response.json();
+      console.log(JSON.stringify(data));
+      console.log("postsell2");
     }catch(error){
       console.log(error.message);
     }
