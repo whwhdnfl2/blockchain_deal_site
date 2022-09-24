@@ -26,6 +26,7 @@ import ErrorLogin from "../Login/ErrorLogin";
 import Tax from "../Tax/Tax";
 import InnerPage from "./InnerPage";
 import ChargingPage from "../ChargingPage/ChargingPage";
+import AllInformation from "../AllInformation/AllInformation";
 
 
 const drawerWidth = 240;
@@ -61,6 +62,8 @@ const HomePage = () => {
 
 
   const [informationRow, setInformationRow] = useState([]);
+  const [AllInformationRow, setAllInformationRows] = useState([]);
+
 
   const [chargingOpen, setChargingOpen] = useState(false);
 
@@ -117,6 +120,14 @@ const HomePage = () => {
         throw new Error('거래 정보 받아오기 실패');
       }
       const data = await response.json();
+      data.sort((a, b) => {
+        a = a.time.toLowerCase();
+        b = b.time.toLowerCase();
+        if (a < b) return 1;
+        if (a > b) return -1;
+    
+        return 0;
+    });
       console.log(JSON.stringify(data));
       setError(null);
       setPage(2);
@@ -199,6 +210,80 @@ const HomePage = () => {
     handleChargingOpen();
   }
 
+  async function PageHandlerSeven(){
+    setIsLoading(true);
+    try{
+      const response = await fetch(`/api/Market`);
+      if(!response.ok){
+        throw new Error('실패다.')
+      }
+
+      const data = await response.json();
+
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          allKRW: marketData.krw * marketData.rec,
+          seller: marketData.seller,
+          id: marketData.id,
+        };
+      });
+      console.log(JSON.stringify(data));
+      setError(null);
+      setSellRows(transformedData);
+      setIsLoading(false);
+    }catch (error){
+      setError(error.message);
+      console.log(error.message);
+    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    setIsLoading(true);
+    
+    const SellRECData = 'koreapower_admin';
+
+    try{
+      const response = await fetch(`/api/Market/getDeal`, {
+        method: 'POST',
+        headers: myHeaders,
+        body: SellRECData,
+        redirect: 'follow'
+      });
+      if(!response.ok){
+        throw new Error(' 실패!!!!!!!!')
+      }
+      const data = await response.json();
+      data.sort((a, b) => {
+        a = a.time.toLowerCase();
+        b = b.time.toLowerCase();
+        if (a < b) return 1;
+        if (a > b) return -1;
+    
+        return 0;
+    });
+      const transformedData = data.map((marketData) => {
+        return {
+          krw: marketData.krw,
+          rec: marketData.rec,
+          time: marketData.time,
+          seller: marketData.seller,
+          buyer: marketData.buyer,
+          id: marketData.id,
+        };
+      });
+      console.log(JSON.stringify(data));
+      setPage(7);
+      setAllInformationRows(transformedData);
+      setIsLoading(false);
+    }catch(error){
+      console.log(error.message);
+      return;
+    }
+
+  }
+
   return (
     <React.Fragment>
     <Box sx={{ display: "flex" }}>
@@ -277,7 +362,7 @@ const HomePage = () => {
                   </ListItemButton>
                 )}
                 {index === 1 && (
-                  <ListItemButton disabled={false} onClick={PageHanderTwo}>
+                  <ListItemButton disabled={false} onClick={PageHandlerSeven}>
                     <ListItemIcon>{<PermIdentity />}</ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
@@ -342,9 +427,10 @@ const HomePage = () => {
         {!error && page === 1 && <InnerPage></InnerPage>}
         {!error && page === 2 && <MyInformationTable informationRow={informationRow} onInformationRow={setInformationRow}/>}
         {!error && page === 3 && <Buy onError={setError} tax={tax} isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
-        {!error && page === 4 && <Sell onError={setError} isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
-        {!error && page === 5 && <Tax open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
-        {!error && page === 6 && <ChargingPage onError={setError} rec={rec} onRec={setRec} asset={asset} onAsset={setAsset} myID={myID} open={chargingOpen} onChargingClose={handleChargingClose} onChargingOpen={handleChargingOpen}></ChargingPage>}
+        {!error && page === 4 && <Sell tax={tax} onError={setError} isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
+        {!error && page === 5 && <Tax myID={myID} open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
+        {!error && page === 6 && <ChargingPage  onError={setError} rec={rec} onRec={setRec} asset={asset} onAsset={setAsset} myID={myID} open={chargingOpen} onChargingClose={handleChargingClose} onChargingOpen={handleChargingOpen}></ChargingPage>}
+        {!error && page === 7 && <AllInformation sellRow={sellRows} AllInformationRow={AllInformationRow}></AllInformation>}
         {error && <h1>{error}</h1>}
       </Box>
     </Box>

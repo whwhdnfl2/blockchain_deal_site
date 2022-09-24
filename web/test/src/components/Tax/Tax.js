@@ -32,7 +32,7 @@ const Tax = (props) => {
     }
     props.onTax(insertTax);
     postTaxData();
-    props.handleTaxClose();
+    props.onTaxClose();
   };
 
   const taxChangeHandler = (event) => {
@@ -40,14 +40,22 @@ const Tax = (props) => {
   }
 
   async function postTaxData(){
-    const SellData = {
-      id: props.myID,
-      tax: Number(insertTax),
-    }
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    console.log(props.myID)
+
+    const SellData = JSON.stringify({
+      "doctype" : "asset",
+      "id" : props.myID,
+      "state" : "REVENUE",
+      "tax" : Number(insertTax)
+    });
     try{
-      const response = await fetch(`/api/`, {
+      const response = await fetch(`/api/updateTax`, {
         method: 'POST',
-        body: JSON.stringify(SellData)
+        headers: myHeaders,
+        body: SellData,
+        redirect: 'follow'
       });
 
       if(!response.ok){

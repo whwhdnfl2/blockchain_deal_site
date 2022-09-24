@@ -29,37 +29,12 @@ const BuyPage = (props) => {
 
   async function submitHandler (event) {
     event.preventDefault();
-    if(0 >= props.buyRec*insertRec || props.myAsset < props.buyRec*insertRec){
+    if(0 >= props.buyRec*insertRec || props.myAsset < (0.01 * (Number(props.tax)) + 1) * (props.buyRec*insertRec) || insertRec > props.buyNum){
         setIsValid(true);
         return;
     }
     else{
       putBuyData();
-      props.onIsLoading(true);
-      try{
-        const response = await fetch(`/api/Market`);
-        if(!response.ok){
-          throw new Error('데이터 받아오기 실패')
-        }
-  
-        const data = await response.json();
-  
-  
-        const transformedData = data.map((marketData) => {
-          return {
-            KRW: marketData.krw,
-            REC: marketData.rec,
-            seller: marketData.seller,
-            id: marketData.id,
-            allKRW: marketData.krw * marketData.rec,
-          };
-        });
-        props.onSellRow(transformedData);
-        props.onIsLoading(false);
-        console.log("buyonshow");
-      }catch (error){
-        console.log(error.message);
-      }
       props.handleClose();
     }
   }
@@ -71,7 +46,7 @@ const BuyPage = (props) => {
     const SellData = JSON.stringify({
       "id": props.itemID,
       "buyer": props.myID,
-      "krw": props.buyRec,
+      "krw": parseInt((0.01 * Number(props.tax) + 1) * props.buyRec * insertRec),
       "rec": Number(insertRec)
     });
     try{
@@ -88,12 +63,37 @@ const BuyPage = (props) => {
       }
   
       const data = await response.json();
-      props.onMyRec(Number(props.myRec) + Number(insertRec));
-      props.onMyAsset(props.myAsset - props.buyRec*insertRec);
+
       props.onIsLoading(false);
       console.log(JSON.stringify(data));
       console.log("postsell");
     }catch(error){
+      console.log(error.message);
+    }
+    props.onIsLoading(true);
+    try{
+      const response = await fetch(`/api/Market`);
+      if(!response.ok){
+        throw new Error('데이터 받아오기 실패')
+      }
+
+      const data = await response.json();
+
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          seller: marketData.seller,
+          id: marketData.id,
+          allKRW: marketData.krw * marketData.rec,
+        };
+      });
+      props.onMyRec(Number(props.myRec) + Number(insertRec));
+      props.onMyAsset(props.myAsset - parseInt((0.01 * Number(props.tax) + 1) * props.buyRec * insertRec));
+      props.onSellRow(transformedData);
+      props.onIsLoading(false);
+      console.log("buyonshow");
+    }catch (error){
       console.log(error.message);
     }
   }
@@ -118,7 +118,7 @@ const BuyPage = (props) => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <form onSubmit={submitHandler}>              
               <TextField margin="dense" label="rec 갯수" onChange={recChangeHandler} inputProps={{type:"number"}} />
-              <p>총 가격: {props.buyRec * insertRec}</p>
+              <p>총 가격(세금 포함): {parseInt((0.01 * Number(props.tax) + 1) * props.buyRec * insertRec)}</p>
               <Button type="submit" variant="contained">
                 submit
               </Button>

@@ -41,31 +41,6 @@ const SellPage = (props) => {
     }
     else{
       postSellRECData();
-      props.onIsLoading(true);
-      try{
-        const response = await fetch(`/api/Market`);
-        if(!response.ok){
-          throw new Error('데이터 받아오기 실패')
-        }
-  
-        const data = await response.json();
-  
-  
-        const transformedData = data.map((marketData) => {
-          return {
-            KRW: marketData.krw,
-            REC: marketData.rec,
-            seller: marketData.seller,
-            id: marketData.id,
-            allKRW: marketData.krw * marketData.rec,
-          };
-        });
-        props.onSellRow(transformedData);
-        props.onIsLoading(false);
-        console.log("sellonshow");
-      }catch (error){
-        console.log(error.message);
-      }
       props.handleClose();
     }
   };
@@ -78,38 +53,14 @@ const SellPage = (props) => {
     }
     else{
       postSellKRWData();
-      props.onIsLoading(true);
-      try{
-        const response = await fetch(`/api/Market`);
-        if(!response.ok){
-          throw new Error('데이터 받아오기 실패')
-        }
-  
-        const data = await response.json();
-  
-  
-        const transformedData = data.map((marketData) => {
-          return {
-            KRW: marketData.krw,
-            REC: marketData.rec,
-            seller: marketData.seller,
-            id: marketData.id,
-            allKRW: marketData.krw * marketData.rec,
-          };
-        });
-        props.onSellRow(transformedData);
-        props.onIsLoading(false);
-        console.log("sellonshow");
-      }catch (error){
-        console.log(error.message);
-      }
       props.handleClose();
     }
   };
 
-  async function postSellKRWData(){
+  async function postSellRECData(){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    props.onIsLoading(true);
     
     const SellRECData = JSON.stringify({
       id: props.myID,
@@ -134,15 +85,41 @@ const SellPage = (props) => {
       console.log(error.message);
       return;
     }
+    props.onIsLoading(true);
+    try{
+      const response = await fetch(`/api/Market`);
+      if(!response.ok){
+        throw new Error('데이터 받아오기 실패')
+      }
+
+      const data = await response.json();
+
+
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          seller: marketData.seller,
+          id: marketData.id,
+          allKRW: marketData.krw * marketData.rec,
+        };
+      });
+      props.onSellRow(transformedData);
+      props.onIsLoading(false);
+      console.log("sellonshow");
+    }catch (error){
+      console.log(error.message);
+    }
   }
 
-  async function postSellRECData(){
+  async function postSellKRWData(){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    props.onIsLoading(true);
 
     const SellKRWData = JSON.stringify({
       id: props.myID,
-      rec: Number(insertPrice),
+      krw: Number(insertPrice),
     });
     
     try{
@@ -161,6 +138,31 @@ const SellPage = (props) => {
     }catch(error){
       console.log(error.message);
     }
+    props.onIsLoading(true);
+    try{
+      const response = await fetch(`/api/Market`);
+      if(!response.ok){
+        throw new Error('데이터 받아오기 실패')
+      }
+
+      const data = await response.json();
+
+
+      const transformedData = data.map((marketData) => {
+        return {
+          KRW: marketData.krw,
+          REC: marketData.rec,
+          seller: marketData.seller,
+          id: marketData.id,
+          allKRW: marketData.krw * marketData.rec,
+        };
+      });
+      props.onSellRow(transformedData);
+      props.onIsLoading(false);
+      console.log("sellonshow");
+    }catch (error){
+      console.log(error.message);
+    }
   }
 
   return (
@@ -176,6 +178,7 @@ const SellPage = (props) => {
             <form onSubmit={submitRECHandler}>
               <h2>판매를 원하는 rec 갯수를입력해주세요. (자연수)</h2>
               <TextField margin="dense" label="rec 갯수" onChange={recChangeHandler} inputProps={{type:"number"}} />
+              <div/>
               <Button type="submit" variant="contained">
                 submit
               </Button>
@@ -183,6 +186,7 @@ const SellPage = (props) => {
             <form onSubmit={submitKRWHandler}>
               <h2>판매를 원하는 rec의 개당 가격을 입력해주세요. (자연수)</h2>
               <TextField margin="dense" label="개당 가격" onChange={priceChangeHandler} inputProps={{type:"number"}} />
+              <div/>
               <Button type="submit" variant="contained">
                 submit
               </Button>

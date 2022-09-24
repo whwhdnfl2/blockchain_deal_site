@@ -23,31 +23,6 @@ const Buy = (props) => {
   };
 
   const handleClose = () => {
-    // props.onIsLoading(true);
-    // try{
-    //   const response = await fetch(`/api/Market`);
-    //   if(!response.ok){
-    //     throw new Error('데이터 받아오기 실패')
-    //   }
-
-    //   const data = await response.json();
-
-
-    //   const transformedData = data.map((marketData) => {
-    //     return {
-    //       KRW: marketData.krw,
-    //       REC: marketData.rec,
-    //       seller: marketData.seller,
-    //       id: marketData.id,
-    //       allKRW: marketData.krw * marketData.rec,
-    //     };
-    //   });
-    //   props.onSellRow(transformedData);
-    //   props.onIsLoading(false);
-    //   console.log("buyonshow");
-    // }catch (error){
-    //   console.log(error.message);
-    // }
     setOpen(false)
   };
 
@@ -65,7 +40,8 @@ const Buy = (props) => {
             <TableRow>
               <TableCell align="right">rec 개당 가격&nbsp;($)</TableCell>
               <TableCell align="right">rec 갯수</TableCell>
-              <TableCell align="right">총 가격&nbsp;($)</TableCell>
+              <TableCell align="right">총 가격&nbsp;(₩)</TableCell>
+              <TableCell align="right">총 가격(세금포함)&nbsp;(₩)</TableCell>
               <TableCell align="right">판매자</TableCell>
               <TableCell align="right">구매</TableCell>
             </TableRow>
@@ -79,13 +55,13 @@ const Buy = (props) => {
                 <TableCell align="right">{row.KRW}</TableCell>
                 <TableCell align="right">{row.REC}</TableCell>
                 <TableCell align="right">{row.allKRW}</TableCell>
+                <TableCell align="right">{parseInt(row.allKRW * ((0.01 * Number(props.tax)) + 1))}</TableCell>
                 <TableCell align="right">{row.seller}</TableCell>
                 <TableCell align="right">
-                  {console.log(row.id)}
-                  {props.myAsset >= row.KRW && (
-                    <Button onClick={() => handleOpen(row.KRW, row.REC, row.id)}>구매</Button>
+                  {(Number(row.REC) !== 0 && props.myAsset >= row.KRW * ((0.01 * Number(props.tax)) + 1)) && (
+                    <Button onClick={() => handleOpen(row.KRW, row.REC, row.seller)}>구매</Button>
                   )}
-                  {props.asset < row.allKRW && <Button disabled>구매</Button>}
+                  {(Number(row.REC) === 0 || props.myAsset < row.KRW * ((0.01 * Number(props.tax)) + 1)) && <Button disabled>구매</Button>}
                 </TableCell>
               </TableRow>
             ))}
@@ -93,7 +69,7 @@ const Buy = (props) => {
         </Table>
       </TableContainer>}
       {props.isLoading && <h2>Loading...</h2>}
-      <BuyPage onIsLoading={props.onIsLoading} onSellRow={props.onSellRow} itemID={nowID} open={open} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
+      <BuyPage tax={props.tax} buyID={nowID} onIsLoading={props.onIsLoading} onSellRow={props.onSellRow} itemID={nowID} open={open} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
     </React.Fragment>
   );
 };

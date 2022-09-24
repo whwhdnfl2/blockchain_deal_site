@@ -77,7 +77,7 @@ const ChargingPage = (props) => {
           throw new Error('Charging rec fail');
         }
         const data = await response.json();
-        props.onREC(props.rec + Number(insertREC));
+        props.onRec(props.rec + Number(insertREC));
         console.log(JSON.stringify(data));
         console.log("postchargingrec");
       }catch(error){
@@ -86,7 +86,7 @@ const ChargingPage = (props) => {
     }
     else if(insertREC < 0){
       try{
-        const response = await fetch(`/api/minusREC`, {
+        const response = await fetch(`/api/makeREC`, {
           method: 'POST',
           headers: myHeaders,
           body: SellData,
@@ -97,7 +97,7 @@ const ChargingPage = (props) => {
           throw new Error('minus rec fail');
         }
         const data = await response.json();
-        props.onREC(props.rec + Number(insertREC));
+        props.onRec(props.rec + Number(insertREC));
         console.log(JSON.stringify(data));
         console.log("postminusrec");
       }catch(error){
@@ -140,7 +140,7 @@ const ChargingPage = (props) => {
     }
     else if(insertKRW < 0){
       try{
-        const response = await fetch(`/api/exchangeKRW`, {
+        const response = await fetch(`/api/chargeKRW`, {
           method: 'POST',
           headers: myHeaders,
           body: SellData,
