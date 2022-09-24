@@ -35,7 +35,7 @@ const SellPage = (props) => {
 
   const submitRECHandler = (event) => {
     event.preventDefault();
-    if(props.myRec < insertRec || insertRec <= 0){
+    if(props.myRec < Number(insertRec) || Number(insertRec) <= 0){
         setIsValid(true);
         return;
     }
@@ -79,7 +79,7 @@ const SellPage = (props) => {
         throw new Error('market등록 실패1')
       }
       const data = await response.json();
-      props.onMyRec(props.myRec - insertRec);
+      props.onMyRec(props.myRec - Number(insertRec));
       console.log(JSON.stringify(data));
       console.log("postsell1");
     }catch(error){
