@@ -32,26 +32,40 @@ const SellPage = (props) => {
   const priceChangeHandler = (event) =>{
     setInsertPrice(event.target.value);
   }
-  const submitHandler = (event) => {
+
+  const submitRECHandler = (event) => {
     event.preventDefault();
     if(props.myRec < insertRec || insertRec <= 0){
         setIsValid(true);
         return;
     }
     else{
-      postSellData();
+      postSellRECData();
       props.onShow();
       props.handleClose();
     }
   };
 
-  async function postSellData(){
+  const submitKRWHandler = (event) => {
+    event.preventDefault();
+    if(insertPrice <= 0){
+        setIsValid(true);
+        return;
+    }
+    else{
+      postSellKRWData();
+      props.onShow();
+      props.handleClose();
+    }
+  };
+
+  async function postSellKRWData(){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     
     const SellRECData = JSON.stringify({
       id: props.myID,
-      rec: insertRec,
+      rec: Number(insertRec),
     });
 
     try{
@@ -65,9 +79,6 @@ const SellPage = (props) => {
         throw new Error('market등록 실패1')
       }
       const data = await response.json();
-      if(data === 'fail'){
-        console.log("이미 시장에 있음");
-      }
       props.onMyRec(props.myRec - insertRec);
       console.log(JSON.stringify(data));
       console.log("postsell1");
@@ -75,10 +86,17 @@ const SellPage = (props) => {
       console.log(error.message);
       return;
     }
+  }
+
+  async function postSellRECData(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
     const SellKRWData = JSON.stringify({
       id: props.myID,
-      krw: insertPrice,
+      rec: Number(insertPrice),
     });
+    
     try{
       const response = await fetch(`/api/Market/upKRW`, {
         method: 'POST',
@@ -107,11 +125,16 @@ const SellPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <form onSubmit={submitHandler}>
-              <h2>판매를 원하는 rec 갯수와 개당 가격을 입력해주세요. (자연수)</h2>
+            <form onSubmit={submitRECHandler}>
+              <h2>판매를 원하는 rec 갯수를입력해주세요. (자연수)</h2>
               <TextField margin="dense" label="rec 갯수" onChange={recChangeHandler} inputProps={{type:"number"}} />
+              <Button type="submit" variant="contained">
+                submit
+              </Button>
+            </form>
+            <form onSubmit={submitKRWHandler}>
+              <h2>판매를 원하는 rec의 개당 가격을 입력해주세요. (자연수)</h2>
               <TextField margin="dense" label="개당 가격" onChange={priceChangeHandler} inputProps={{type:"number"}} />
-              <p>총 가격: {insertPrice * insertRec}</p>
               <Button type="submit" variant="contained">
                 submit
               </Button>

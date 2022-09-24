@@ -77,7 +77,7 @@ const ChargingPage = (props) => {
           throw new Error('Charging rec fail');
         }
         const data = await response.json();
-        props.onREC(props.rec + insertREC);
+        props.onREC(props.rec + Number(insertREC));
         console.log(JSON.stringify(data));
         console.log("postchargingrec");
       }catch(error){
@@ -97,7 +97,7 @@ const ChargingPage = (props) => {
           throw new Error('minus rec fail');
         }
         const data = await response.json();
-        props.onREC(props.rec + insertREC);
+        props.onREC(props.rec + Number(insertREC));
         console.log(JSON.stringify(data));
         console.log("postminusrec");
       }catch(error){

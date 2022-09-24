@@ -42,7 +42,7 @@ const Tax = (props) => {
   async function postTaxData(){
     const SellData = {
       id: props.myID,
-      tax: insertTax,
+      tax: Number(insertTax),
     }
     try{
       const response = await fetch(`/api/`, {
