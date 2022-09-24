@@ -48,6 +48,7 @@ const Login = (props) => {
   };
 
   const BuyerOrSellerAPI = () => {
+    
     setIsLoading(true);
     fetch(`/api/logininfo/${emailState.value}`)
     .then((response) => {
@@ -67,6 +68,7 @@ const Login = (props) => {
       setIsLoading(false);
       props.onTax(data);
     });
+    
   }
 
   const AdminAPI = () => {

@@ -1,0 +1,16 @@
+.child {
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #ccc;
+    width: 500px;
+    height: 500px;
+  }
+
+  .parent {
+    display: flex;
+  }
+
+  .good{
+    margin-left: auto;
+    margin-right: auto;
+  }

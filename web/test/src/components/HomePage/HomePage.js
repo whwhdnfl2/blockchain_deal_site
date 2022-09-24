@@ -27,6 +27,7 @@ import Tax from "../Tax/Tax";
 import InnerPage from "./InnerPage";
 import ChargingPage from "../ChargingPage/ChargingPage";
 import AllInformation from "../AllInformation/AllInformation";
+import FirstPage from "./FirstPage";
 
 
 const drawerWidth = 240;
@@ -66,6 +67,9 @@ const HomePage = () => {
 
 
   const [chargingOpen, setChargingOpen] = useState(false);
+
+  const [rKRW, setRKRT] = useState(0); 
+  const [rREC, setRREC] = useState(0); 
 
   const handleChargingOpen = () =>{
     setChargingOpen(true);
@@ -108,6 +112,34 @@ const HomePage = () => {
     setPage(1);
     setError(null);
   };
+
+  async function PageHanderEight(){
+    try{
+      const SellData = `${myID}`;
+      const response = await fetch(`/api/Market/myinfo`,{
+        method: 'POST',
+        body: SellData
+      });
+      if(!response.ok){
+        throw new Error('거래 정보 받아오기 실패');
+      }
+      const data = await response.json();
+      let recentKRW = 0;
+      let recentREC = 0;
+      for(var i = 0; i < data.length; i++){
+        recentKRW += Number(data[i].krw);
+        recentREC += Number(data[i].rec);
+      }
+      setRKRT(recentKRW);
+      setRREC(recentREC);
+      console.log(JSON.stringify(data));
+      setError(null);
+      setPage(8);
+      setInformationRow(data);
+    }catch(error){
+      console.log(error.message);
+    }
+  }
 
   async function PageHanderTwo()  {
     try{
@@ -316,11 +348,11 @@ const HomePage = () => {
         <Toolbar />
         <Divider />
         <List>
-          {(isLoginBuyer || isLoginSeller) && (["홈페이지", "내 거래내역", "REC 구매", "REC 판매", "환전 및 REC충전"].map(
+          {(isLoginBuyer || isLoginSeller) && (["전체적인 정보 확인", "내 거래내역", "REC 구매", "REC 판매", "환전 및 REC충전"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
-                  <ListItemButton disabled={!(isLoginBuyer||isLoginSeller)} onClick={PageHanderOne}>
+                  <ListItemButton disabled={!(isLoginBuyer||isLoginSeller)} onClick={PageHanderEight}>
                     <ListItemIcon>{<Home />}</ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
@@ -424,13 +456,15 @@ const HomePage = () => {
         sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
       >
         <Toolbar />
-        {!error && page === 1 && <InnerPage></InnerPage>}
+        {!error && page === 1 && <FirstPage asset={asset} rec={rec}></FirstPage>}
         {!error && page === 2 && <MyInformationTable informationRow={informationRow} onInformationRow={setInformationRow}/>}
         {!error && page === 3 && <Buy onError={setError} tax={tax} isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {!error && page === 4 && <Sell tax={tax} onError={setError} isLoading={isLoading} onIsLoading={setIsLoading} sellRow={sellRows} myID={myID} onSellRow={setSellRows} myRec={rec} myAsset={asset} onMyRec={setRec} onMyAsset={setAsset}/>}
         {!error && page === 5 && <Tax myID={myID} open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
         {!error && page === 6 && <ChargingPage  onError={setError} rec={rec} onRec={setRec} asset={asset} onAsset={setAsset} myID={myID} open={chargingOpen} onChargingClose={handleChargingClose} onChargingOpen={handleChargingOpen}></ChargingPage>}
         {!error && page === 7 && <AllInformation sellRow={sellRows} AllInformationRow={AllInformationRow}></AllInformation>}
+        {!error && page === 8 && <InnerPage rKRW={rKRW} rREC={rREC} asset={asset} rec={rec}></InnerPage>}
+
         {error && <h1>{error}</h1>}
       </Box>
     </Box>
