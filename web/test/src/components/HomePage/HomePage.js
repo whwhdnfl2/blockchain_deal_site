@@ -268,7 +268,7 @@ const HomePage = () => {
               </ListItem>
             )
           ))}
-          {isLoginAdmin && (["홈페이지", "모든 거래내역", "REC 구매", "REC 판매"].map(
+          {isLoginAdmin && (["홈페이지", "모든 거래내역"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
@@ -283,22 +283,10 @@ const HomePage = () => {
                     <ListItemText primary={text} />
                   </ListItemButton>
                 )}
-                {index === 2 && (
-                  <ListItemButton disabled={true} onClick={PageHanderThree}>
-                    <ListItemIcon>{<Store />}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                )}
-                {index === 3 && (
-                  <ListItemButton disabled={true} onClick={PageHanderFour}>
-                    <ListItemIcon>{<Store />}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                )}
               </ListItem>
             )
           ))}
-          {isLoginAdminTax && (["홈페이지", "Tax 수정", "REC 구매", "REC 판매"].map(
+          {isLoginAdminTax && (["홈페이지", "Tax 수정"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
@@ -310,18 +298,6 @@ const HomePage = () => {
                 {index === 1 && (
                   <ListItemButton disabled={false} onClick={PageHandlerFive}>
                     <ListItemIcon>{<PermIdentity />}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                )}
-                {index === 2 && (
-                  <ListItemButton disabled={true} onClick={PageHanderThree}>
-                    <ListItemIcon>{<Store />}</ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                )}
-                {index === 3 && (
-                  <ListItemButton disabled={true} onClick={PageHanderFour}>
-                    <ListItemIcon>{<Store />}</ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
                 )}

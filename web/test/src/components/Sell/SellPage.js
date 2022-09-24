@@ -40,6 +40,7 @@ const SellPage = (props) => {
     }
     else{
       postSellData();
+      props.onShow();
       props.handleClose();
     }
   };
@@ -48,17 +49,22 @@ const SellPage = (props) => {
     const SellData = {
       id: props.myID,
       rec: insertRec,
-      asset: insertPrice,
     }
-    const response = await fetch(`/api/`, {
-      method: 'POST',
-      body: JSON.stringify(SellData)
-    });
-    props.onMyRec(props.myRec - insertRec)
-    const data = await response.json();
-    console.log(JSON.stringify(data));
-    console.log("postsell");
-    props.onShow();
+    try{
+      const response = await fetch(`/api/Market/upREC`, {
+        method: 'POST',
+        body: JSON.stringify(SellData)
+      });
+      if(!response.ok){
+        throw new Error('market등록 실패')
+      }
+      const data = await response.json();
+      props.onMyRec(props.myRec - insertRec);
+      console.log(JSON.stringify(data));
+      console.log("postsell");
+    }catch(error){
+      console.log(error.message);
+    }
   }
 
   return (

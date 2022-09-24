@@ -32,7 +32,7 @@ const ErrorChargingPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            <p>갯수를 잘못 입력했습니다. 다시 확인 해주세요.</p>
+            <p>갯수를 잘못 입력했습니다. 다시 확인 해주세요.(0을 입력하거나 rec나 자산이 음수가 될 값을 입력하면 안됩니다.)</p>
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           </Typography>

@@ -51,6 +51,7 @@ const BuyPage = (props) => {
       "rec": Number(insertRec)
     });
     try{
+      props.onIsLoading(true);
       const response = await fetch(`/api/Market/trade`, {
         method: 'POST',
         headers: myHeaders,
@@ -62,9 +63,10 @@ const BuyPage = (props) => {
         throw new Error('Buying fail');
       }
   
+      const data = await response.json();
       props.onMyRec(Number(props.myRec) + Number(insertRec));
       props.onMyAsset(props.myAsset - props.buyRec*insertRec);
-      const data = await response.json();
+      props.onIsLoading(false);
       console.log(JSON.stringify(data));
       console.log("postsell");
     }catch(error){

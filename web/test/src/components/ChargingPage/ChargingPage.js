@@ -26,14 +26,24 @@ const ChargingPage = (props) => {
   const [chargingIsValid, setChargingIsValid] = useState(false);
 
 
-  const submitHandler = (event) => {
+  const submitrecHandler = (event) => {
     event.preventDefault();
-    if(Number(props.rec) + Number(insertREC) < 0 || Number(props.asset) + Number(insertKRW) < 0){
+    if(Number(props.rec) + Number(insertREC) < 0){
       setChargingIsValid(true);
       return;
     }
-    postChargingData();
+    postChargingrecData();
     props.onRec(Number(props.rec) + Number(insertREC));
+    props.onChargingClose();
+  };
+
+  const submitkrwHandler = (event) => {
+    event.preventDefault();
+    if(Number(props.asset) + Number(insertKRW) < 0){
+      setChargingIsValid(true);
+      return;
+    }
+    postChargingkrwData();
     props.onAsset(Number(props.asset) + Number(insertKRW));
     props.onChargingClose();
   };
@@ -44,34 +54,115 @@ const ChargingPage = (props) => {
 
   const KRWchangeHandler = (event) => {
     setInsertKRW(event.target.value);
-
   }
 
-  async function postChargingData(){
-    const SellData = {
+  async function postChargingrecData(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const SellData = JSON.stringify({
       id: props.myID,
       rec: insertREC,
-      krw: insertKRW,
-    }
-    try{
-      const response = await fetch(`/api/`, {
-        method: 'POST',
-        body: JSON.stringify(SellData)
-      });
-
-      if(!response.ok){
-        throw new Error('Charging fail');
+    });
+    if(insertREC > 0){
+      try{
+        const response = await fetch(`/api/makeREC`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: SellData,
+          redirect: 'follow'
+        });
+  
+        if(!response.ok){
+          throw new Error('Charging rec fail');
+        }
+        const data = await response.json();
+        props.onREC(props.rec + insertREC);
+        console.log(JSON.stringify(data));
+        console.log("postchargingrec");
+      }catch(error){
+        console.log(error.message);
       }
-
-      props.onREC(props.rec + insertREC);
-      props.onAsset(props.asset + insertKRW);
-      const data = await response.json();
-      console.log(JSON.stringify(data));
-      console.log("postsell");
-    }catch(error){
-      console.log(error.message);
+    }
+    else if(insertREC < 0){
+      try{
+        const response = await fetch(`/api/minusREC`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: SellData,
+          redirect: 'follow'
+        });
+  
+        if(!response.ok){
+          throw new Error('minus rec fail');
+        }
+        const data = await response.json();
+        props.onREC(props.rec + insertREC);
+        console.log(JSON.stringify(data));
+        console.log("postminusrec");
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    else{
+      setChargingIsValid(true);
     }
   }
+
+
+  async function postChargingkrwData(){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    const SellData = JSON.stringify({
+      id: props.myID,
+      krw: insertKRW,
+    });
+    if(insertKRW > 0){
+      try{
+        const response = await fetch(`/api/chargeKRW`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: SellData,
+          redirect: 'follow'
+        });
+  
+        if(!response.ok){
+          throw new Error('Charging krw fail');
+        }
+        const data = await response.json();
+        props.onAsset(props.asset + Number(insertKRW));
+        console.log(JSON.stringify(data));
+        console.log("postchargingkrw");
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    else if(insertKRW < 0){
+      try{
+        const response = await fetch(`/api/exchangeKRW`, {
+          method: 'POST',
+          headers: myHeaders,
+          body: SellData,
+          redirect: 'follow'
+        });
+  
+        if(!response.ok){
+          throw new Error('minus krw fail');
+        }
+        const data = await response.json();
+        props.onAsset(props.asset + Number(insertKRW));
+        console.log(JSON.stringify(data));
+        console.log("postminuskrw");
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    else{
+      setChargingIsValid(true);
+    }
+  }
+
 
   return (
     <div>
@@ -83,9 +174,16 @@ const ChargingPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <form onSubmit={submitHandler}>
-              <h2>충전하거나 빼가고싶은 rec와 자산의 양을 입력하세요. (정수)</h2>
+            <form onSubmit={submitrecHandler}>
+              <h2>충전하거나 빼가고싶은 rec양을 입력하세요. (정수)</h2>
               <TextField margin="dense" label="REC" onChange={REChangeHandler} inputProps={{type:"number"}} />
+              <div/>
+              <Button type="submit" variant="contained">
+                submit
+              </Button>
+            </form>
+            <form onSubmit={submitkrwHandler}>
+              <h2>충전하거나 빼가고싶은 자산양을 입력하세요.</h2>
               <TextField margin="dense" label="KRW" onChange={KRWchangeHandler} inputProps={{type:"number"}} />
               <div/>
               <Button type="submit" variant="contained">
