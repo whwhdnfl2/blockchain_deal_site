@@ -2,7 +2,7 @@ import React from "react";
 
 const FirstPage = () => {
     return (
-        <h1>firstpage23</h1>
+        <h1>firstpage234</h1>
     );
 }
 
