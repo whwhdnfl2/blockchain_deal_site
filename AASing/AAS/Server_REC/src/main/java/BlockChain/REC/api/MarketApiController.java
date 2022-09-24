@@ -10,6 +10,7 @@ import BlockChain.REC.repository.AccountRepository;
 import BlockChain.REC.service.AccountService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,7 @@ public class MarketApiController {
     private final AccountService accountService;
     private final AccountRepository accountRepository;
 
+    @ApiOperation(value = "마켓 매물 조회" ,notes =  "마켓에서 판매중인 매물들을 조회합니다")
     @GetMapping("/api/Market")
     public List<MarketDto> getMarket() throws Exception{
         Account account = accountRepository.findByUsername("koreapower_admin");
@@ -109,6 +111,36 @@ public class MarketApiController {
         MarketConnect.UpdateAsset(marketDto);
         return marketDto;
     }
+
+    @PostMapping("/api/Market/upREC")
+    public MarketDto upREC(@RequestBody @Valid AssetDto assetDto) throws Exception{
+        Account marketaccount = accountRepository.findByUsername("koreapower_admin");
+        MemberDto market = new MemberDto(marketaccount);
+        EasilyConnect MarketConnect =  new EasilyConnect(market);
+        MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
+        marketDto.setREC(marketDto.getREC() + assetDto.getREC());
+        MarketConnect.UpdateAsset(marketDto);
+
+        Account Selleraccount = accountRepository.findByUsername(assetDto.getID());
+        MemberDto seller = new MemberDto(Selleraccount);
+        EasilyConnect SellerConnect = new EasilyConnect(seller);
+        AssetDto sellDto = new AssetDto(SellerConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
+        sellDto.setREC(marketDto.getREC() - assetDto.getREC());
+        SellerConnect.UpdateAsset(sellDto);
+        return marketDto;
+    }
+    @PostMapping("/api/Market/upKRW")
+    public MarketDto upKRW(@RequestBody @Valid AssetDto assetDto) throws Exception{
+        Account marketaccount = accountRepository.findByUsername("koreapower_admin");
+        MemberDto market = new MemberDto(marketaccount);
+        EasilyConnect MarketConnect =  new EasilyConnect(market);
+        MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
+        marketDto.setKRW(assetDto.getKRW());
+        MarketConnect.UpdateAsset(marketDto);
+        return marketDto;
+    }
+
+
     /*
     거래 함수
     {

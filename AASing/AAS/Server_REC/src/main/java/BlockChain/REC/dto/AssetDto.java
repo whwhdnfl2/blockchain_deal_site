@@ -11,6 +11,8 @@ public class AssetDto {
   private String ID;
   private int REC;
   private int KRW;
+  private String Role;
+
 
 
     @Override
@@ -24,14 +26,15 @@ public class AssetDto {
                 '}';
     }
 
-    private String Role;
-
   public AssetDto(JsonObject asset) {
         this.docType = asset.get("docType").getAsString();
         this.ID = asset.get("ID").getAsString();
         this.REC = asset.get("REC").getAsInt();
         this.KRW = asset.get("KRW").getAsInt();
         this.Role = asset.get("Role").getAsString();
+  }
+  public AssetDto(){
+
   }
     public String getDocType() {
         return docType;
@@ -47,10 +50,6 @@ public class AssetDto {
 
     public void setID(String ID) {
         this.ID = ID;
-    }
-
-    public AssetDto() {
-
     }
 
     public int getREC() {
