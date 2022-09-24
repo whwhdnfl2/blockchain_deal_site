@@ -22,41 +22,38 @@ const Buy = (props) => {
     setOpen(true);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    // props.onIsLoading(true);
+    // try{
+    //   const response = await fetch(`/api/Market`);
+    //   if(!response.ok){
+    //     throw new Error('데이터 받아오기 실패')
+    //   }
+
+    //   const data = await response.json();
+
+
+    //   const transformedData = data.map((marketData) => {
+    //     return {
+    //       KRW: marketData.krw,
+    //       REC: marketData.rec,
+    //       seller: marketData.seller,
+    //       id: marketData.id,
+    //       allKRW: marketData.krw * marketData.rec,
+    //     };
+    //   });
+    //   props.onSellRow(transformedData);
+    //   props.onIsLoading(false);
+    //   console.log("buyonshow");
+    // }catch (error){
+    //   console.log(error.message);
+    // }
+    setOpen(false)
+  };
 
   const [nowrec, setNowRec] = useState(1);
   const [nownum, setNowAsset] = useState(1);
   const [nowID, setNowID] = useState("");
-
-
-  async function showData() {
-    props.onIsLoading(true);
-    try{
-      const response = await fetch(`/api/Market`);
-      if(!response.ok){
-        throw new Error('데이터 받아오기 실패')
-      }
-
-      const data = await response.json();
-
-
-      const transformedData = data.map((marketData) => {
-        return {
-          KRW: marketData.krw,
-          REC: marketData.rec,
-          seller: marketData.seller,
-          id: marketData.id,
-          allKRW: marketData.krw * marketData.rec,
-        };
-      });
-      props.onSellRow(transformedData);
-      props.onIsLoading(false);
-      console.log("buyonshow");
-    }catch (error){
-      props.onError(error.message);
-      console.log(error.message);
-    }
-  }
   
 
 
@@ -96,7 +93,7 @@ const Buy = (props) => {
         </Table>
       </TableContainer>}
       {props.isLoading && <h2>Loading...</h2>}
-      <BuyPage onIsLoading={props.onIsLoading} itemID={nowID} open={open} onShow={showData} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
+      <BuyPage onIsLoading={props.onIsLoading} onSellRow={props.onSellRow} itemID={nowID} open={open} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
     </React.Fragment>
   );
 };

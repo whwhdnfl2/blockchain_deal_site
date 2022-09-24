@@ -16,36 +16,36 @@ const Sell = (props) => {
   const handleOpen = () => {
     setOpen(true);
   };
-  const handleClose = () => setOpen(false);
-
-  async function showData() {
-    props.onIsLoading(true);
-    try{
-      const response = await fetch(`/api/Market`);
-      if(!response.ok){
-        throw new Error('데이터 받아오기 실패')
-      }
-
-      const data = await response.json();
-
-
-      const transformedData = data.map((marketData) => {
-        return {
-          KRW: marketData.krw,
-          REC: marketData.rec,
-          seller: marketData.seller,
-          id: marketData.id,
-          allKRW: marketData.krw * marketData.rec,
-        };
-      });
-      props.onSellRow(transformedData);
-      props.onIsLoading(false);
-      console.log("sellonshow");
-    }catch (error){
-      props.onError(error.message);
-      console.log(error.message);
-    }
-  }
+  const handleClose = () => {
+    // props.onIsLoading(true);
+    //   try{
+    //     const response = await fetch(`/api/Market`);
+    //     if(!response.ok){
+    //       throw new Error('데이터 받아오기 실패')
+    //     }
+  
+    //     const data = await response.json();
+  
+  
+    //     const transformedData = data.map((marketData) => {
+    //       return {
+    //         KRW: marketData.krw,
+    //         REC: marketData.rec,
+    //         seller: marketData.seller,
+    //         id: marketData.id,
+    //         allKRW: marketData.krw * marketData.rec,
+    //       };
+    //     });
+    //     props.onSellRow(transformedData);
+    //     props.onIsLoading(false);
+    //     console.log("sellonshow");
+    //   }catch (error){
+    //     console.log(error.message);
+    //   }
+    //   props.handleClose();
+    // }
+    setOpen(false);
+  };
   
 
   return (
@@ -87,7 +87,8 @@ const Sell = (props) => {
         myAsset={props.myAsset}
         onMyRec={props.onMyRec}
         onMyAsset={props.onMyAsset}
-        onShow={showData}
+        onIsLoading={props.onIsLoading}
+        onSellRow={props.onSellRow}
       ></SellPage>
     </React.Fragment>
   );

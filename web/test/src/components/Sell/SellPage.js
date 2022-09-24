@@ -33,7 +33,7 @@ const SellPage = (props) => {
     setInsertPrice(event.target.value);
   }
 
-  const submitRECHandler = (event) => {
+  async function submitRECHandler (event) {
     event.preventDefault();
     if(props.myRec < Number(insertRec) || Number(insertRec) <= 0){
         setIsValid(true);
@@ -41,12 +41,36 @@ const SellPage = (props) => {
     }
     else{
       postSellRECData();
-      props.onShow();
+      props.onIsLoading(true);
+      try{
+        const response = await fetch(`/api/Market`);
+        if(!response.ok){
+          throw new Error('데이터 받아오기 실패')
+        }
+  
+        const data = await response.json();
+  
+  
+        const transformedData = data.map((marketData) => {
+          return {
+            KRW: marketData.krw,
+            REC: marketData.rec,
+            seller: marketData.seller,
+            id: marketData.id,
+            allKRW: marketData.krw * marketData.rec,
+          };
+        });
+        props.onSellRow(transformedData);
+        props.onIsLoading(false);
+        console.log("sellonshow");
+      }catch (error){
+        console.log(error.message);
+      }
       props.handleClose();
     }
   };
 
-  const submitKRWHandler = (event) => {
+  async function submitKRWHandler (event) {
     event.preventDefault();
     if(insertPrice <= 0){
         setIsValid(true);
@@ -54,7 +78,31 @@ const SellPage = (props) => {
     }
     else{
       postSellKRWData();
-      props.onShow();
+      props.onIsLoading(true);
+      try{
+        const response = await fetch(`/api/Market`);
+        if(!response.ok){
+          throw new Error('데이터 받아오기 실패')
+        }
+  
+        const data = await response.json();
+  
+  
+        const transformedData = data.map((marketData) => {
+          return {
+            KRW: marketData.krw,
+            REC: marketData.rec,
+            seller: marketData.seller,
+            id: marketData.id,
+            allKRW: marketData.krw * marketData.rec,
+          };
+        });
+        props.onSellRow(transformedData);
+        props.onIsLoading(false);
+        console.log("sellonshow");
+      }catch (error){
+        console.log(error.message);
+      }
       props.handleClose();
     }
   };

@@ -122,7 +122,7 @@ const HomePage = () => {
       setPage(2);
       setInformationRow(data);
     }catch(error){
-
+      console.log(error.message);
     }
   };
 
@@ -135,7 +135,6 @@ const HomePage = () => {
       }
 
       const data = await response.json();
-
 
       const transformedData = data.map((marketData) => {
         return {

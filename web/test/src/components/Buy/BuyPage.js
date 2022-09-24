@@ -27,7 +27,7 @@ const BuyPage = (props) => {
     setInsertRec(event.target.value);
   }
 
-  const submitHandler = (event) =>{
+  async function submitHandler (event) {
     event.preventDefault();
     if(0 >= props.buyRec*insertRec || props.myAsset < props.buyRec*insertRec){
         setIsValid(true);
@@ -35,7 +35,31 @@ const BuyPage = (props) => {
     }
     else{
       putBuyData();
-      props.onShow();
+      props.onIsLoading(true);
+      try{
+        const response = await fetch(`/api/Market`);
+        if(!response.ok){
+          throw new Error('데이터 받아오기 실패')
+        }
+  
+        const data = await response.json();
+  
+  
+        const transformedData = data.map((marketData) => {
+          return {
+            KRW: marketData.krw,
+            REC: marketData.rec,
+            seller: marketData.seller,
+            id: marketData.id,
+            allKRW: marketData.krw * marketData.rec,
+          };
+        });
+        props.onSellRow(transformedData);
+        props.onIsLoading(false);
+        console.log("buyonshow");
+      }catch (error){
+        console.log(error.message);
+      }
       props.handleClose();
     }
   }
