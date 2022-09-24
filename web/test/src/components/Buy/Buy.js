@@ -96,7 +96,7 @@ const Buy = (props) => {
         </Table>
       </TableContainer>}
       {props.isLoading && <h2>Loading...</h2>}
-      <BuyPage itemID={nowID} open={open} onShow={showData} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
+      <BuyPage onIsLoading={props.onIsLoading} itemID={nowID} open={open} onShow={showData} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
     </React.Fragment>
   );
 };
