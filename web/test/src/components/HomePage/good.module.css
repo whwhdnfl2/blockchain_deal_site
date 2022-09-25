@@ -11,6 +11,9 @@
   }
 
   .good{
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto;
+  }
+
+  .nice{
+    text-align: center;
   }

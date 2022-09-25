@@ -139,6 +139,52 @@ const HomePage = () => {
     }catch(error){
       console.log(error.message);
     }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    setIsLoading(true);
+    
+    const SellRECData = 'koreapower_admin';
+
+    try{
+      const response = await fetch(`/api/Market/getDeal`, {
+        method: 'POST',
+        headers: myHeaders,
+        body: SellRECData,
+        redirect: 'follow'
+      });
+      if(!response.ok){
+        throw new Error(' 실패!!!!!!!!')
+      }
+      const data = await response.json();
+      data.sort((a, b) => {
+        a = a.time.toLowerCase();
+        b = b.time.toLowerCase();
+        if (a < b) return 1;
+        if (a > b) return -1;
+    
+        return 0;
+    });
+      const transformedData = data.map((marketData) => {
+        return {
+          krw: marketData.krw,
+          rec: marketData.rec,
+          time: marketData.time,
+          seller: marketData.seller,
+          buyer: marketData.buyer,
+          id: marketData.id,
+          perREC: marketData.krw % marketData.rec,
+        };
+      });
+      console.log(JSON.stringify(data));
+      setPage(2);
+      setAllInformationRows(transformedData);
+      setIsLoading(false);
+    }catch(error){
+      console.log(error.message);
+      return;
+    }
+
   }
 
   async function PageHanderTwo()  {
@@ -162,11 +208,12 @@ const HomePage = () => {
     });
       console.log(JSON.stringify(data));
       setError(null);
-      setPage(2);
+      
       setInformationRow(data);
     }catch(error){
       console.log(error.message);
     }
+
   };
 
   async function PageHanderThree () {
@@ -463,7 +510,7 @@ const HomePage = () => {
         {!error && page === 5 && <Tax myID={myID} open={taxOpen} onTaxOpen={handleTaxOpen} onTaxClose={handleTaxClose} tax={tax} onTax={setTax}></Tax>}
         {!error && page === 6 && <ChargingPage  onError={setError} rec={rec} onRec={setRec} asset={asset} onAsset={setAsset} myID={myID} open={chargingOpen} onChargingClose={handleChargingClose} onChargingOpen={handleChargingOpen}></ChargingPage>}
         {!error && page === 7 && <AllInformation sellRow={sellRows} AllInformationRow={AllInformationRow}></AllInformation>}
-        {!error && page === 8 && <InnerPage rKRW={rKRW} rREC={rREC} asset={asset} rec={rec}></InnerPage>}
+        {!error && page === 8 && <InnerPage rKRW={rKRW} rREC={rREC} asset={asset} rec={rec} AllInformationRow={AllInformationRow}></InnerPage>}
 
         {error && <h1>{error}</h1>}
       </Box>
