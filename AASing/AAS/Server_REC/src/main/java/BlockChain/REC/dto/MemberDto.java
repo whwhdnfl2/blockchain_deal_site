@@ -6,8 +6,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
+@NoArgsConstructor
 public class MemberDto {
 
   private String original_id;
@@ -62,22 +66,4 @@ public class MemberDto {
 //    System.out.println("overrideAuth : " + overrideAuth);
   }
 
-  @Override
-  public String toString() {
-    return "MemberDto{" +
-            "original_id='" + original_id + '\'' +
-            ", mspID='" + mspID + '\'' +
-            ", channelName='" + channelName + '\'' +
-            ", chaincodeName='" + chaincodeName + '\'' +
-            ", cryptoPath=" + cryptoPath +
-            ", certPath=" + certPath +
-            ", keyDirPath=" + keyDirPath +
-            ", tlsCertPath=" + tlsCertPath +
-            ", basePath=" + basePath +
-            ", peerEndpoint='" + peerEndpoint + '\'' +
-            ", overrideAuth='" + overrideAuth + '\'' +
-            ", ID='" + ID + '\'' +
-            ", User='" + User + '\'' +
-            '}';
-  }
 }

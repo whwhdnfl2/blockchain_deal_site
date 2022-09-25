@@ -1,5 +1,12 @@
 package BlockChain.REC.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Getter
+@ToString
+@NoArgsConstructor
 public class TradeDto {
     private String id;
     private String buyer;
@@ -13,45 +20,4 @@ public class TradeDto {
         this.rec = rec;
     }
 
-    @Override
-    public String toString() {
-        return "TradeDto{" +
-                "id='" + id + '\'' +
-                ", buyer='" + buyer + '\'' +
-                ", krw=" + krw +
-                ", rec=" + rec +
-                '}';
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getBuyer() {
-        return buyer;
-    }
-
-    public void setBuyer(String buyer) {
-        this.buyer = buyer;
-    }
-
-    public int getKrw() {
-        return krw;
-    }
-
-    public void setKrw(int krw) {
-        this.krw = krw;
-    }
-
-    public int getRec() {
-        return rec;
-    }
-
-    public void setRec(int rec) {
-        this.rec = rec;
-    }
 }

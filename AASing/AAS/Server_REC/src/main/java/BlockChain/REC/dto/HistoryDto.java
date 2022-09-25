@@ -1,7 +1,14 @@
 package BlockChain.REC.dto;
 
 import com.google.gson.JsonObject;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Getter
+@ToString
+@NoArgsConstructor
 public class HistoryDto {
     /*
     type HistoryQueryResult struct {
@@ -16,45 +23,11 @@ public class HistoryDto {
     private String Timestamp;
     private boolean Isdelete;
 
-    public AssetDto getRecord() {
-        return record;
-    }
-
-    public void setRecord(AssetDto record) {
-        this.record = record;
-    }
-
-    public String getTxid() {
-        return Txid;
-    }
-
-    public void setTxid(String txid) {
-        Txid = txid;
-    }
-
-    public String getTimestamp() {
-        return Timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        Timestamp = timestamp;
-    }
-
-    public boolean isIsdelete() {
-        return Isdelete;
-    }
-
-    public void setIsdelete(boolean isdelete) {
-        Isdelete = isdelete;
-    }
 
     public HistoryDto(AssetDto record, String txid, String timestamp, boolean isdelete) {
         this.record = record;
         Txid = txid;
         Timestamp = timestamp;
         Isdelete = isdelete;
-    }
-    public HistoryDto(){
-
     }
 }

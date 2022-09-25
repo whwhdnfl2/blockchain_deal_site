@@ -1,44 +1,18 @@
 package BlockChain.REC.dto;
 
 import com.google.gson.JsonObject;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@Getter
+@ToString
+@NoArgsConstructor
 public class TaxDto {
     private String doctype;
     private String id;
     private String state;
     private int tax;
-
-    public String getDoctype() {
-        return doctype;
-    }
-
-    public void setDoctype(String doctype) {
-        this.doctype = doctype;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public int getTax() {
-        return tax;
-    }
-
-    public void setTax(int tax) {
-        this.tax = tax;
-    }
 
     public TaxDto(String doctype, String id, String state, int tax) {
         this.doctype = doctype;

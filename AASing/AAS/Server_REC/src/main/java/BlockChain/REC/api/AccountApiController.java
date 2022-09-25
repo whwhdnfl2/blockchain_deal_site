@@ -93,41 +93,43 @@ public class AccountApiController {
 
     @PostMapping("/api/makeREC")
     public AssetDto upREC(@RequestBody @Valid AssetDto assetDto) throws Exception{
-        Account Selleraccount = accountRepository.findByUsername(assetDto.getID());
-        MemberDto seller = new MemberDto(Selleraccount);
+        Account SellerAccount = accountRepository.findByUsername(assetDto.getID());
+        MemberDto seller = new MemberDto(SellerAccount);
         EasilyConnect SellerConnect = new EasilyConnect(seller);
         AssetDto sellDto = new AssetDto(SellerConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
-        sellDto.setREC(sellDto.getREC() + assetDto.getREC());
+        sellDto.addREC(assetDto.getREC());
+        //sellDto.setREC(sellDto.getREC() + assetDto.getREC());
         SellerConnect.UpdateAsset(sellDto);
         return sellDto;
     }
     @PostMapping("/api/exchangeKRW")
     public AssetDto exchangeKRW(@RequestBody @Valid AssetDto assetDto) throws Exception{
-        Account Selleraccount = accountRepository.findByUsername(assetDto.getID());
-        MemberDto seller = new MemberDto(Selleraccount);
+        Account SellerAccount = accountRepository.findByUsername(assetDto.getID());
+        MemberDto seller = new MemberDto(SellerAccount);
         EasilyConnect SellerConnect = new EasilyConnect(seller);
         AssetDto sellDto = new AssetDto(SellerConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
-        sellDto.setKRW(sellDto.getKRW() - assetDto.getKRW());
+        sellDto.minusKRW(-assetDto.getKRW());
+        //sellDto.setKRW(sellDto.getKRW() - assetDto.getKRW());
         SellerConnect.UpdateAsset(sellDto);
         return sellDto;
     }
     @PostMapping("/api/minusREC")
     public AssetDto minusREC(@RequestBody @Valid AssetDto assetDto) throws Exception{
-        Account Buyeraccount = accountRepository.findByUsername(assetDto.getID());
-        MemberDto buyer = new MemberDto(Buyeraccount);
+        Account BuyerAccount = accountRepository.findByUsername(assetDto.getID());
+        MemberDto buyer = new MemberDto(BuyerAccount);
         EasilyConnect BuyerConnect = new EasilyConnect(buyer);
         AssetDto buyDto = new AssetDto(BuyerConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
-        buyDto.setREC(buyDto.getREC() - assetDto.getREC());
+        buyDto.minusREC(assetDto.getREC());
         BuyerConnect.UpdateAsset(buyDto);
         return buyDto;
     }
     @PostMapping("/api/chargeKRW")
     public AssetDto chargeKRW(@RequestBody @Valid AssetDto assetDto) throws Exception{
-        Account Buyeraccount = accountRepository.findByUsername(assetDto.getID());
-        MemberDto buyer = new MemberDto(Buyeraccount);
+        Account BuyerAccount = accountRepository.findByUsername(assetDto.getID());
+        MemberDto buyer = new MemberDto(BuyerAccount);
         EasilyConnect BuyerConnect = new EasilyConnect(buyer);
         AssetDto buyDto = new AssetDto(BuyerConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
-        buyDto.setKRW(buyDto.getKRW() + assetDto.getKRW());
+        buyDto.addKRW (assetDto.getKRW());
         BuyerConnect.UpdateAsset(buyDto);
         return buyDto;
     }
