@@ -107,7 +107,7 @@ public class MarketApiController {
         MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(assetDto.getID()).getAsJsonObject());
 //        marketDto.setREC(assetDto.getREC());
 //        marketDto.setKRW(assetDto.getKRW());
-//        marketDto.setTime(LocalDateTime.now().toString());
+        marketDto.setTime(LocalDateTime.now().toString());
         MarketConnect.UpdateAsset(marketDto);
         return marketDto;
     }
@@ -161,8 +161,8 @@ public class MarketApiController {
         MarketDto marketDto = new MarketDto(MarketConnect.getAssetByID(tradeDto.getId()).getAsJsonObject());
         marketDto.minusREC(tradeDto.getRec());
 //        marketDto.setREC(marketDto.getREC() - tradeDto.getRec());
-//        marketDto.setTime(LocalDateTime.now().toString());
-//        marketDto.setBuyer(tradeDto.getBuyer());
+        marketDto.setTime(LocalDateTime.now().toString());
+        marketDto.setBuyer(tradeDto.getBuyer());
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         String password = marketDto.toString();
