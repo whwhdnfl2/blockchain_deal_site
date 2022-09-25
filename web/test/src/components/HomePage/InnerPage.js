@@ -1,4 +1,3 @@
-
 import classes from "./good.module.css";
 import Card from "./Card"
 import React, { PureComponent } from 'react';
@@ -12,9 +11,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
             <div className={classes.parent}>
                 <Card>
                     <div className={classes.good}>
-                        <h2>보유 자산</h2>
+                        <h2>보유 자산(₩)</h2>
                         <br/>
-                        <p className={classes.nice}>{this.props.asset}</p>
+                        <p className={classes.nice}>{this.props.asset}₩</p>
                         
                     </div>
                 </Card>
@@ -36,9 +35,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
                 </Card>
                 <Card>
                     <div className={classes.good}>
-                        <h2>최근 거래한 REC 양</h2>
+                        <h2>최근 거래한 REC 양(₩)</h2>
                         <br/>
-                        <p className={classes.nice}>{this.props.rREC}</p>
+                        <p className={classes.nice}>{this.props.rREC}₩</p>
                     </div>
 
                 </Card>
