@@ -108,9 +108,9 @@ const BuyPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-          <h2>구매를 원하는 rec 갯수를 입력해주세요. (자연수)</h2>
+          <h2>구매를 원하는 rec 갯수를 입력해주세요.(자연수)</h2>
             <Card>
-              <p>rec 개당 가격: {props.buyRec}</p>
+              <p>rec 개당 가격(₩): {props.buyRec}</p>
               <p>rec 갯수: {props.buyNum}</p>
               <p>판매자: {props.buyID}</p>
             </Card>
@@ -118,7 +118,7 @@ const BuyPage = (props) => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <form onSubmit={submitHandler}>              
               <TextField margin="dense" label="rec 갯수" onChange={recChangeHandler} inputProps={{type:"number"}} />
-              <p>총 가격(세금 포함): {parseInt((0.01 * Number(props.tax) + 1) * props.buyRec * insertRec)}</p>
+              <p>총 가격(세금 포함)(₩): {parseInt((0.01 * Number(props.tax) + 1) * props.buyRec * insertRec)}</p>
               <Button type="submit" variant="contained">
                 submit
               </Button>

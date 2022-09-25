@@ -54,8 +54,8 @@ const Buy = (props) => {
               >
                 <TableCell align="right">{row.KRW}</TableCell>
                 <TableCell align="right">{row.REC}</TableCell>
-                <TableCell align="right">{row.allKRW}</TableCell>
-                <TableCell align="right">{parseInt(row.allKRW * ((0.01 * Number(props.tax)) + 1))}</TableCell>
+                <TableCell align="right">{row.allKRW}₩</TableCell>
+                <TableCell align="right">{parseInt(row.allKRW * ((0.01 * Number(props.tax)) + 1))}₩</TableCell>
                 <TableCell align="right">{row.seller}</TableCell>
                 <TableCell align="right">
                   {(Number(row.REC) !== 0 && props.myAsset >= row.KRW * ((0.01 * Number(props.tax)) + 1)) && (

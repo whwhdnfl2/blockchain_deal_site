@@ -31,7 +31,7 @@ const ErrorSellPage = (props) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            <p>갯수를 잘못 입력했습니다. 다시 확인 해주세요.</p>
+            <p>갯수를 잘못 입력했습니다. 다시 확인 해주세요.(보유한 rec보다 많이 입력했는지 확인해주세요.)</p>
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           </Typography>

@@ -167,7 +167,7 @@ const HomePage = () => {
     });
       const transformedData = data.map((marketData) => {
         return {
-          name: marketData.time.substr(0, 9),
+          name: marketData.time.substr(5, 10),
           perREC: Number(marketData.krw) / Number(marketData.rec),
         };
       });

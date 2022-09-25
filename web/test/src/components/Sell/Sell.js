@@ -30,10 +30,10 @@ const Sell = (props) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">rec 개당 가격&nbsp;($)</TableCell>
-              <TableCell align="right">rec 갯수($)</TableCell>
-              <TableCell align="right">총 가격&nbsp;($)</TableCell>
-              <TableCell align="right">총 가격(세금포함)&nbsp;($)</TableCell>
+              <TableCell align="right">rec 개당 가격&nbsp;(₩)</TableCell>
+              <TableCell align="right">rec 갯수</TableCell>
+              <TableCell align="right">총 가격&nbsp;(₩)</TableCell>
+              <TableCell align="right">총 가격(세금포함)&nbsp;(₩)</TableCell>
               <TableCell align="right">판매자</TableCell>
             </TableRow>
           </TableHead>
@@ -43,10 +43,10 @@ const Sell = (props) => {
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="right">{row.KRW}</TableCell>
+                <TableCell align="right">{row.KRW}₩</TableCell>
                 <TableCell align="right">{row.REC}</TableCell>
-                <TableCell align="right">{row.allKRW}</TableCell>
-                <TableCell align="right">{parseInt(row.allKRW * ((0.01 * Number(props.tax)) + 1))}</TableCell>
+                <TableCell align="right">{row.allKRW}₩</TableCell>
+                <TableCell align="right">{parseInt(row.allKRW * ((0.01 * Number(props.tax)) + 1))}₩</TableCell>
                 <TableCell align="right">{row.seller}</TableCell>
               </TableRow>
             ))}

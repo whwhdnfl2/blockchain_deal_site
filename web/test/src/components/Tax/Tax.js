@@ -83,7 +83,7 @@ const Tax = (props) => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <form onSubmit={submitHandler}>
               <div>
-                <h2>원하는 tax를 입력 해주세요. (값은 0-100 사이의  입니다.)</h2>
+                <h2>원하는 세율(%)을 입력 해주세요. (0-100 사이의 숫자입니다.)</h2>
                 <TextField margin="normal" label="tax(%)" onChange={taxChangeHandler} inputProps={{type:"number"}} />
               </div>
               <Button type="submit" variant="contained">
