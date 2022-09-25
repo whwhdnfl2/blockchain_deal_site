@@ -1,12 +1,12 @@
 package BlockChain.REC.dto;
 
 import com.google.gson.JsonObject;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 public class TaxDto {
     private String doctype;

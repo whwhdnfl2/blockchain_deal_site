@@ -2,12 +2,13 @@ package BlockChain.REC.dto;
 
 import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
-@Getter
+@Data
 @NoArgsConstructor
 public class MarketDto {
     private String DocType;
@@ -37,7 +38,7 @@ public class MarketDto {
         this.REC = asset.get("REC").getAsInt();
         this.KRW = asset.get("KRW").getAsInt();
         this.state = asset.get("State").getAsString();
-        this.time = LocalDateTime.now().toString();
+        this.time = asset.get("Time").getAsString();
         //this.time = asset.get("Time").getAsString();
     }
 

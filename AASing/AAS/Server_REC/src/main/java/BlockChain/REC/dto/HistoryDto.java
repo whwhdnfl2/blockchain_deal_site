@@ -6,8 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 public class HistoryDto {
     /*

@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+
 @NoArgsConstructor
+@Data
 public class AssetDto {
   private String docType;
   private String ID;

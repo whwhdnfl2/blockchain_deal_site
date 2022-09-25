@@ -9,12 +9,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 public class MemberDto {
 
   private String original_id;
+
+  public MemberDto(String original_id, String mspID, String channelName, String chaincodeName, Path cryptoPath, Path certPath, Path keyDirPath, Path tlsCertPath, String peerEndpoint, String overrideAuth, String ID, String user) {
+    this.original_id = original_id;
+    this.mspID = mspID;
+    this.channelName = channelName;
+    this.chaincodeName = chaincodeName;
+    this.cryptoPath = cryptoPath;
+    this.certPath = certPath;
+    this.keyDirPath = keyDirPath;
+    this.tlsCertPath = tlsCertPath;
+    this.peerEndpoint = peerEndpoint;
+    this.overrideAuth = overrideAuth;
+    this.ID = ID;
+    User = user;
+  }
+
   private String mspID;
   private String channelName;
   private String chaincodeName;

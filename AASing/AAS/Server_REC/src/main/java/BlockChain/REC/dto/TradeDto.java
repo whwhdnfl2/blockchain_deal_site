@@ -1,11 +1,11 @@
 package BlockChain.REC.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 public class TradeDto {
     private String id;
