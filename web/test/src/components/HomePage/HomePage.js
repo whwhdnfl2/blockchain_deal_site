@@ -167,12 +167,7 @@ const HomePage = () => {
     });
       const transformedData = data.map((marketData) => {
         return {
-          krw: marketData.krw,
-          rec: marketData.rec,
-          time: marketData.time,
-          seller: marketData.seller,
-          buyer: marketData.buyer,
-          id: marketData.id,
+          name: marketData.time,
           perREC: Number(marketData.krw) / Number(marketData.rec),
         };
       });
