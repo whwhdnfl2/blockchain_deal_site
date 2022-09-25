@@ -30,6 +30,7 @@ const FirstPage = () => {
                     clickable
                 />
             </Stack>
+            {/* <p>firstpage</p> */}
         </React.Fragment>
 
     );
