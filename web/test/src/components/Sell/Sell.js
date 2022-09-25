@@ -6,6 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { CircularProgress } from "@mui/material";
 
 import Button from "@mui/material/Button";
 import SellPage from "./SellPage";
@@ -53,7 +54,7 @@ const Sell = (props) => {
           </TableBody>
         </Table>
       </TableContainer>}
-      {props.isLoading && <h2>Loading...</h2>}
+      {props.isLoading && <h2>Loading...<CircularProgress size={23}/></h2>}
       <SellPage
         open={open}
         handleClose={handleClose}

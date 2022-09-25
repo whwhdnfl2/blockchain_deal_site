@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
+import CircularProgress from '@mui/material/CircularProgress';
 import Button from "@mui/material/Button";
 import BuyPage from "./BuyPage";
 
@@ -68,7 +68,7 @@ const Buy = (props) => {
           </TableBody>
         </Table>
       </TableContainer>}
-      {props.isLoading && <h2>Loading...</h2>}
+      {props.isLoading && <h2>Loading...<CircularProgress size={23}/></h2>}
       <BuyPage tax={props.tax} buyID={nowID} onIsLoading={props.onIsLoading} onSellRow={props.onSellRow} itemID={nowID} open={open} handleClose={handleClose} myID={props.myID} myRec={props.myRec} myAsset={props.myAsset} onMyRec={props.onMyRec} onMyAsset={props.onMyAsset} buyRec={nowrec} buyNum={nownum}></BuyPage>
     </React.Fragment>
   );
