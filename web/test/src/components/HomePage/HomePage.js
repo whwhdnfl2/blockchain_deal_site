@@ -173,7 +173,7 @@ const HomePage = () => {
           seller: marketData.seller,
           buyer: marketData.buyer,
           id: marketData.id,
-          perREC: marketData.krw % marketData.rec,
+          perREC: Number(marketData.krw) / Number(marketData.rec),
         };
       });
       console.log(JSON.stringify(data));

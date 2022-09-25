@@ -58,16 +58,15 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
                     <div className={classes.good}>
                         <h2>보유 자산</h2>
                         <br/>
-                        {/* <p className={classes.nice}>{props.asset}</p> */}
-                        <p className={classes.nice}>asd`</p>
+                        <p className={classes.nice}>{this.props.asset}</p>
+                        
                     </div>
                 </Card>
                 <Card>
                     <div className={classes.good}>
                         <h2>보유 REC</h2>
                         <br/>
-                        {/* <p className={classes.nice}>{props.rec}</p> */}
-                        <p className={classes.nice}>asd</p>
+                        <p className={classes.nice}>{this.props.rec}</p>
                     </div>
 
                 </Card>
@@ -75,8 +74,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
                     <div className={classes.good}>
                         <h2>최근 거래한 자산 양</h2>
                         <br/>
-                        {/* <p className={classes.nice}>{props.rKRW}</p> */}
-                        <p className={classes.nice}>asd</p>
+                        <p className={classes.nice}>{this.props.rKRW}</p>
                     </div>
 
                 </Card>
@@ -84,8 +82,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
                     <div className={classes.good}>
                         <h2>최근 거래한 REC 양</h2>
                         <br/>
-                        {/* <p className={classes.nice}>{props.rREC}</p> */}
-                        <p className={classes.nice}>asd</p>
+                        <p className={classes.nice}>{this.props.rREC}</p>
                     </div>
 
                 </Card>
