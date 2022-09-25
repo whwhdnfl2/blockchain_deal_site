@@ -375,7 +375,7 @@ const HomePage = () => {
             {page === 5 && `Tax 수정`}
             {page === 6 && `환전 및 REC충전`}
             {page === 7 && `모든 거래내역`}
-            {page === 8 && `전체적인 정보 확인`}
+            {page === 8 && `메인페이지`}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -394,7 +394,7 @@ const HomePage = () => {
         <Toolbar />
         <Divider />
         <List>
-          {(isLoginBuyer || isLoginSeller) && (["전체적인 정보 확인", "내 거래내역", "REC 구매", "REC 판매", "환전 및 REC충전"].map(
+          {(isLoginBuyer || isLoginSeller) && (["메인페이지", "내 거래내역", "REC 구매", "REC 판매", "환전 및 REC충전"].map(
             (text, index) => (
               <ListItem key={text} disablePadding>
                 {index === 0 && (
