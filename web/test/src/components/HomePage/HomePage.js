@@ -177,7 +177,7 @@ const HomePage = () => {
         };
       });
       console.log(JSON.stringify(data));
-      setPage(2);
+      setPage(8);
       setAllInformationRows(transformedData);
       setIsLoading(false);
     }catch(error){
@@ -208,7 +208,7 @@ const HomePage = () => {
     });
       console.log(JSON.stringify(data));
       setError(null);
-      
+      setPage(2);
       setInformationRow(data);
     }catch(error){
       console.log(error.message);
