@@ -160,14 +160,14 @@ const HomePage = () => {
       data.sort((a, b) => {
         a = a.time.toLowerCase();
         b = b.time.toLowerCase();
-        if (a < b) return 1;
-        if (a > b) return -1;
+        if (a > b) return 1;
+        if (a < b) return -1;
     
         return 0;
     });
       const transformedData = data.map((marketData) => {
         return {
-          name: marketData.time,
+          name: marketData.time.substr(0, 9),
           perREC: Number(marketData.krw) / Number(marketData.rec),
         };
       });
