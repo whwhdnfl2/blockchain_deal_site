@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Chip, Stack } from "@mui/material";
+
 
 
 
@@ -14,32 +14,7 @@ const MyInformationTable = (props) => {
 
   return (
     <React.Fragment>
-        <Stack direction="row" spacing={1}>
-          <Chip
-              label="Official Hyperledger Fabric Homepage Link"
-              component="a"
-              href="https://www.hyperledger.org/use/fabric"
-              variant="outlined"
-              target='_blink'
-              clickable
-          />
-          <Chip
-              label="Official Hyperledger Fabric doc Link"
-              component="a"
-              href="https://hyperledger-fabric.readthedocs.io/en/latest/whatis.html"
-              variant="outlined"
-              target='_blink'
-              clickable
-          />
-          <Chip
-              label="Official React Link"
-              component="a"
-              href="https://reactjs.org/"
-              variant="outlined"
-              target='_blink'
-              clickable
-          />
-        </Stack>
+      
       {props.informationRow.length !== 0 && <h2>거래내역</h2>}
         { props.informationRow.length !== 0 &&<TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

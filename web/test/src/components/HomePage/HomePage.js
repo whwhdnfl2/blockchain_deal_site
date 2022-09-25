@@ -167,7 +167,7 @@ const HomePage = () => {
     });
       const transformedData = data.map((marketData) => {
         return {
-          name: marketData.time.substr(5, 10),
+          name: marketData.time.substr(5, 8),
           perREC: Number(marketData.krw) / Number(marketData.rec),
         };
       });
@@ -372,6 +372,10 @@ const HomePage = () => {
             {page === 2 && `내 거래내역`}
             {page === 3 && `REC 구매`}
             {page === 4 && `REC 판매`}
+            {page === 5 && `Tax 수정`}
+            {page === 6 && `환전 및 REC충전`}
+            {page === 7 && `모든 거래내역`}
+            {page === 8 && `전체적인 정보 확인`}
           </Typography>
         </Toolbar>
       </AppBar>
