@@ -135,26 +135,43 @@ AASing/AAS ./refresh.sh
 
 
 ### 서버 사용법
+● Springboot와 mysql을 사용합니다.
+
 
 1. intelliJ에서 서버 프로젝트 열기
   
     AASing/AAS/Server_REC/build.gradle
 
-    spring이 필요합니다
-
     
 2. Mysql
 
+● user 테이블 생성 
+
+```sql
+CREATE TABLE `user` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `chaincode_name` varchar(255) DEFAULT NULL,
+  `channel_name` varchar(255) DEFAULT NULL,
+  `msp_id` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `peer_end_point` varchar(255) DEFAULT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  `user_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+```
+
+● user 테이블에 데이터 입력
 
 ```sql
 
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (1,'people','people','buyer',NULL,'localhost:9051','BUYER','Buyer_User1');
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (2,'people','people','buyer',NULL,'localhost:9051','BUYER','Buyer_User2');
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (3,'people','people','buyer',NULL,'localhost:9051','BUYER','Buyer_User3');
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (4,'people','people','seller',NULL,'localhost:7051','SELLER','Seller_User1');
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (5,'people','people','seller',NULL,'localhost:7051','SELLER','Seller_User2');
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (6,'market','market','koreapower',NULL,'localhost:11061','KOREAPOWER','koreapower_admin');
-INSERT INTO `` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (7,'revenue','revenue','tax',NULL,'localhost:11051','TAX','tax_admin');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (1,'people','people','buyer',NULL,'localhost:9051','BUYER','Buyer_User1');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (2,'people','people','buyer',NULL,'localhost:9051','BUYER','Buyer_User2');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (3,'people','people','buyer',NULL,'localhost:9051','BUYER','Buyer_User3');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (4,'people','people','seller',NULL,'localhost:7051','SELLER','Seller_User1');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (5,'people','people','seller',NULL,'localhost:7051','SELLER','Seller_User2');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (6,'market','market','koreapower',NULL,'localhost:11061','KOREAPOWER','koreapower_admin');
+INSERT INTO `user` (`id`,`chaincode_name`,`channel_name`,`msp_id`,`password`,`peer_end_point`,`role`,`user_id`) VALUES (7,'revenue','revenue','tax',NULL,'localhost:11051','TAX','tax_admin');
 ```
 
 서버 실행버튼 클릭
